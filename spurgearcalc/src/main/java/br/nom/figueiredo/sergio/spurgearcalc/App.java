@@ -11,6 +11,6 @@ public class App {
 
         GearGeometry geometry = GearGenerator.generate(gearParameters);
 
-        System.out.println(geometry);
+        System.out.println(geometry.getTeeth().svgPath(20));
     }
 }

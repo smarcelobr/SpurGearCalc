@@ -31,7 +31,13 @@ public class PIRational extends Rational {
     @Override
     public PIRational multiply(double multiplier) {
         Rational rationalMultiplier = toRational(multiplier);
-        return new PIRational(this.piRadians.multiply(rationalMultiplier).simplify(),  this.multiply(rationalMultiplier).simplify());
+        return new PIRational(this.piRadians.multiply(rationalMultiplier).simplify(),  super.multiply(rationalMultiplier).simplify());
+    }
+
+    @Override
+    public Rational divide(Rational other) {
+        return new PIRational(this.piRadians.divide(other),
+                super.divide(other));
     }
 
     public PIRational addPI(Rational piRadians) {
@@ -43,7 +49,7 @@ public class PIRational extends Rational {
         return new PIRational(this.piRadians, super.add(offset));
     }
 
-    public Rational getAproxValue() {
+    protected Rational getAproxValue() {
         return this.piRadians.multiply(Rational.PI).add(this).simplify();
     }
 
@@ -56,6 +62,11 @@ public class PIRational extends Rational {
     @Override
     public String toString() {
         return this.piRadians + "*PI + " + super.toString();
+    }
+
+    @Override
+    public PIRational negate() {
+        return new PIRational(this.piRadians.negate(), super.negate());
     }
 
 }

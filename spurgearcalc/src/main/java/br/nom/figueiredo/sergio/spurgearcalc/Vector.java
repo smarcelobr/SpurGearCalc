@@ -1,15 +1,15 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
-public class Point {
+public class Vector {
     private final double x;
     private final double y;
 
-    public Point(double x, double y) {
+    public Vector(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public Point(Rational x, Rational y) {
+    public Vector(Rational x, Rational y) {
         this.x = x.toDouble();
         this.y = y.toDouble();
     }
@@ -22,11 +22,12 @@ public class Point {
         return y;
     }
 
-    public Point add(Point other) {
-        return new Point(this.getX()+other.getX(), this.getY()+other.getY());
+    public Vector add(Vector other) {
+        return new Vector(this.getX()+other.getX(), this.getY()+other.getY());
     }
 
-    public Point add(Vector vector) {
-        return vector.add(this);
+    public Point add(Point point) {
+        return new Point(this.getX()+point.getX(), this.getY()+point.getY());
     }
+
 }

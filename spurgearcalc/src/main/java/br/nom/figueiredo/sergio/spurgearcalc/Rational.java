@@ -148,7 +148,7 @@ public class Rational {
         return this.multiply(toRational(multiplier));
     }
 
-    public Rational toRational(double number){
+    public static Rational toRational(double number){
         return toRational(number, 8).simplify();
     }
 
@@ -202,4 +202,7 @@ public class Rational {
         return this.getNumerador() / (double) this.getDenominador();
     }
 
+    public Rational negate() {
+        return new Rational(-this.numerador, this.denominador);
+    }
 }

@@ -1,13 +1,20 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+/**
+ * Baseado na referencia.
+ *
+ * https://khkgears.net/new/gear_knowledge/gear_technical_reference/involute_gear_profile.html
+ *
+ * Veja docs/REF2.md
+ */
 public class GearGeometry {
 
     private Rational pitchRadius;
     private Rational addendum;
     private Rational dedendum;
     private PIRational circularPitch;
-    private Point pitchPoint;
-    private Point topPt1;
+    private Rational workingDepth;
+    private final TeethGeometry teeth = new TeethGeometry();
 
     public Rational getAddendum() {
         return addendum;
@@ -41,19 +48,15 @@ public class GearGeometry {
         this.pitchRadius = pitchRadius;
     }
 
-    public void setPitchPoint(Point pitchPoint) {
-        this.pitchPoint = pitchPoint;
+    public TeethGeometry getTeeth() {
+        return teeth;
     }
 
-    public Point getPitchPoint() {
-        return pitchPoint;
+    public Rational getWorkingDepth() {
+        return workingDepth;
     }
 
-    public void setTopPt1(Point topPt1) {
-        this.topPt1 = topPt1;
-    }
-
-    public Point getTopPt1() {
-        return topPt1;
+    public void setWorkingDepth(Rational workingDepth) {
+        this.workingDepth = workingDepth;
     }
 }
