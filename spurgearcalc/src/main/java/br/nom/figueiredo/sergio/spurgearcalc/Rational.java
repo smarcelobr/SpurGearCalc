@@ -1,8 +1,10 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
-import java.util.Objects;
-
 public class Rational {
+
+    public static final Rational ONE = new Rational(1,1);
+    public static final Rational ZERO = new Rational(0,1);
+    public static final Rational PI = new Rational(62831853,20000000);
 
     private final long numerador;
     private final long denominador;
@@ -10,6 +12,11 @@ public class Rational {
     public Rational(long numerador, long denominador) {
         this.numerador = numerador;
         this.denominador = denominador;
+    }
+
+    public Rational(long integer) {
+        this.numerador = integer;
+        this.denominador = 1L;
     }
 
     public long getNumerador() {
@@ -62,14 +69,17 @@ public class Rational {
 
     // greatest common factor
     public static long gcf(final long l1, final long l2) {
+        assert l1!=0;
+        assert l2!=0;
+
         long d1 = 1;
         long d2 = 1;
 
         long factor1;
         long factor2;
         while (true) {
-            factor1 = l1/d1;
-            factor2 = l2/d2;
+            factor1 = Math.abs(l1)/d1;
+            factor2 = Math.abs(l2)/d2;
             if (factor1 == factor2) {
                 break;
             } else if (factor1<factor2) {
@@ -87,8 +97,12 @@ public class Rational {
     }
 
     public Rational simplify() {
-        long gcf = gcf(this.numerador, this.denominador);
-        return new Rational(this.numerador/gcf, this.denominador/gcf);
+        if (this.numerador!=0 && this.denominador != 0) {
+            long gcf = gcf(this.numerador, this.denominador);
+            return new Rational(this.numerador / gcf, this.denominador / gcf);
+        } else {
+            return this;
+        }
     }
 
     @Override
@@ -116,9 +130,76 @@ public class Rational {
     public String toString() {
         Rational thisSimplified = this.simplify();
         String simplfiedStr = "";
-        if (this.denominador != thisSimplified.denominador) {
-            simplfiedStr = " (" + thisSimplified.numerador + "/" + thisSimplified.denominador + ")";
+        if (this.getDenominador() != thisSimplified.getDenominador()) {
+            simplfiedStr = " (" + thisSimplified + ")";
         }
-        return this.numerador + "/" + this.denominador + simplfiedStr;
+        String thisStr = Long.toString(this.getNumerador());
+        if (this.getDenominador()!=1) {
+            thisStr = thisStr + "/" + this.getDenominador();
+        }
+        return thisStr + simplfiedStr;
     }
+
+    public Rational multiply(long multiplier) {
+        return new Rational(this.numerador*multiplier, this.denominador);
+    }
+
+    public Rational multiply(double multiplier) {
+        return this.multiply(toRational(multiplier));
+    }
+
+    public Rational toRational(double number){
+        return toRational(number, 8).simplify();
+    }
+
+    /**
+     * ref: https://stackoverflow.com/questions/14014158/double-to-fraction-in-java (lido em 22/12/2022)
+     *
+     * @param number
+     * @param largestRightOfDecimal
+     * @return
+     */
+    public static Rational toRational(double number, int largestRightOfDecimal){
+
+        long sign = 1;
+        if(number < 0){
+            number = -number;
+            sign = -1;
+        }
+
+        final long SECOND_MULTIPLIER_MAX = (long)Math.pow(10, largestRightOfDecimal - 1);
+        final long FIRST_MULTIPLIER_MAX = SECOND_MULTIPLIER_MAX * 10L;
+        final double ERROR = Math.pow(10, -largestRightOfDecimal - 1);
+        long firstMultiplier = 1;
+        long secondMultiplier = 1;
+        boolean notIntOrIrrational = false;
+        long truncatedNumber = (long)number;
+        Rational rationalNumber = new Rational((long)(sign * number * FIRST_MULTIPLIER_MAX), FIRST_MULTIPLIER_MAX);
+
+        double error = number - truncatedNumber;
+        while( (error >= ERROR) && (firstMultiplier <= FIRST_MULTIPLIER_MAX)){
+            secondMultiplier = 1;
+            firstMultiplier *= 10;
+            while( (secondMultiplier <= SECOND_MULTIPLIER_MAX) && (secondMultiplier < firstMultiplier) ){
+                double difference = (number * firstMultiplier) - (number * secondMultiplier);
+                truncatedNumber = (long)difference;
+                error = difference - truncatedNumber;
+                if(error < ERROR){
+                    notIntOrIrrational = true;
+                    break;
+                }
+                secondMultiplier *= 10;
+            }
+        }
+
+        if(notIntOrIrrational){
+            rationalNumber = new Rational(sign * truncatedNumber, firstMultiplier - secondMultiplier);
+        }
+        return rationalNumber;
+    }
+
+    public double toDouble() {
+        return this.getNumerador() / (double) this.getDenominador();
+    }
+
 }
