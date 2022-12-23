@@ -1,5 +1,8 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 /**
  * Baseado na referencia.
  *
@@ -58,5 +61,16 @@ public class GearGeometry {
 
     public void setWorkingDepth(Rational workingDepth) {
         this.workingDepth = workingDepth;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("pitchRadius", pitchRadius)
+                .append("addendum", addendum)
+                .append("dedendum", dedendum)
+                .append("circularPitch", circularPitch)
+                .append("workingDepth", workingDepth)
+                .toString();
     }
 }

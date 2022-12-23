@@ -9,8 +9,15 @@ public class App {
         Rational module = new Rational(8, 5); // 1.6 mm
         GearParameters gearParameters = new GearParameters(12, module);
 
+        System.out.println("Geometry Params");
+        System.out.println(gearParameters);
+
         GearGeometry geometry = GearGenerator.generate(gearParameters);
 
+        System.out.println("Geometry results");
+        System.out.println(geometry);
+
+        System.out.println("Tooth Path");
         System.out.println(geometry.getTeeth().svgPath(20));
     }
 }

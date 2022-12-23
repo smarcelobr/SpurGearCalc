@@ -205,4 +205,12 @@ public class Rational {
     public Rational negate() {
         return new Rational(-this.numerador, this.denominador);
     }
+
+    public static Rational toRational(double numerador, double denominador) {
+        Rational rNumerador = toRational(numerador);
+        Rational rDenominador = toRational(denominador);
+
+        return rNumerador.divide(rDenominador);
+    }
+
 }

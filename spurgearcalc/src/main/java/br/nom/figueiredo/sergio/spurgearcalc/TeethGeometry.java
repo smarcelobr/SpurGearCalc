@@ -13,6 +13,7 @@ public class TeethGeometry {
     private Point rootClearancePt1;
     private Point rootClearancePt2;
     private Point workPt2;
+    private Rational dedendumFilletRadius;
 
     public Point getPitchPoint() {
         return pitchPoint;
@@ -76,16 +77,36 @@ public class TeethGeometry {
      * @return
      */
     public String svgPath(int scale) {
-        return String.format(Locale.ENGLISH, "M%f %f L%f %f L%f %f L%f %f L%f %f L%f %f L%f %f L%f %f L%f %f",
-                this.getPitchPoint().getX()*scale,this.getPitchPoint().getY()*scale,
-                this.getTopPt1().getX()*scale,this.getTopPt1().getY()*scale,
-                this.getTopPt2().getX()*scale,this.getTopPt2().getY()*scale,
-                this.getPitchPoint2().getX()*scale,this.getPitchPoint2().getY()*scale,
-                this.getWorkPt1().getX()*scale, this.getWorkPt1().getY()*scale,
-                this.getRootClearancePt1().getX()*scale, this.getRootClearancePt1().getY()*scale,
-                this.getRootClearancePt2().getX()*scale, this.getRootClearancePt2().getY()*scale,
-                this.getWorkPt2().getX()*scale, this.getWorkPt2().getY()*scale,
-                this.getPitchPoint3().getX()*scale, this.getPitchPoint3().getY()*scale);
+
+        String htmlTemplate = "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<body>\n" +
+                "\n" +
+                "<svg height=\"400\" width=\"400\">\n" +
+                " <path id=\"lineBC\" d=\"M%f %f L%f %f L%f %f L%f %f L%f %f L%f %f L%f %f L%f %f L%f %f\" \n" +
+                "  stroke=\"red\" stroke-width=\"1\" fill=\"none\" />\n" +
+                "  <circle cx=\"%f\" cy=\"%f\" r=\"1\" stroke=\"blue\" stroke-width=\"1\" fill=\"blue\" />\n" +
+                "<path id=\"arcRoot1\" d=\"M%9$f %10$f A%21$f %21$f 0 0 1 %11$f %12$f\"\n"+
+                "  stroke=\"green\" stroke-width=\"1\" fill=\"none\" />\n" +
+                "  Sorry, your browser does not support inline SVG.  \n" +
+                "</svg> \n" +
+                " \n" +
+                "</body>\n" +
+                "</html>";
+
+        return String.format(Locale.ENGLISH, htmlTemplate,
+                this.getPitchPoint().getX()*scale,this.getPitchPoint().getY()*scale, // 1,2
+                this.getTopPt1().getX()*scale,this.getTopPt1().getY()*scale,               // 3,4
+                this.getTopPt2().getX()*scale,this.getTopPt2().getY()*scale,               // 5,6
+                this.getPitchPoint2().getX()*scale,this.getPitchPoint2().getY()*scale,     // 7,8
+                this.getWorkPt1().getX()*scale, this.getWorkPt1().getY()*scale,            //9,10
+                this.getRootClearancePt1().getX()*scale, this.getRootClearancePt1().getY()*scale, // 11,12
+                this.getRootClearancePt2().getX()*scale, this.getRootClearancePt2().getY()*scale, // 13,14
+                this.getWorkPt2().getX()*scale, this.getWorkPt2().getY()*scale,            // 15,16
+                this.getPitchPoint3().getX()*scale, this.getPitchPoint3().getY()*scale,    // 17,18
+                this.dedendumFillet1Center.getX()*scale, this.dedendumFillet1Center.getY()*scale, // 19,20
+                this.dedendumFilletRadius.toDouble()*scale  // 21
+                );
     }
 
     public void setWorkPt1(Point workPt1) {
@@ -126,5 +147,13 @@ public class TeethGeometry {
 
     public Point getWorkPt2() {
         return workPt2;
+    }
+
+    public void setDedendumFilletRadius(Rational dedendumFilletRadius) {
+        this.dedendumFilletRadius = dedendumFilletRadius;
+    }
+
+    public Rational getDedendumFilletRadius() {
+        return dedendumFilletRadius;
     }
 }

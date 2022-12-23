@@ -1,5 +1,8 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class GearParameters {
 
     private final Integer numTeeth;
@@ -22,5 +25,14 @@ public class GearParameters {
 
     public PIRational getPressureAngle() {
         return pressureAngle;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("numTeeth", numTeeth)
+                .append("module", module)
+                .append("pressureAngle", pressureAngle)
+                .toString();
     }
 }
