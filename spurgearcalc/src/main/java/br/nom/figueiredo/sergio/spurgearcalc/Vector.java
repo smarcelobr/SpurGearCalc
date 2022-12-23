@@ -48,6 +48,14 @@ public class Vector {
         return this.divide(mag);
     }
 
+    /**
+     * Direção oposta sem mudar a magnitude.
+     * @return vetor inverso
+     */
+    public Vector inverse() {
+        return this.multiply(-1.0);
+    }
+
     private Vector divide(double divisor) {
         return new Vector(this.x / divisor, this.y / divisor);
     }

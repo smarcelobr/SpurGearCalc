@@ -14,6 +14,7 @@ public class TeethGeometry {
     private Point rootClearancePt2;
     private Point workPt2;
     private Rational dedendumFilletRadius;
+    private Point dedendumFillet2Center;
 
     public Point getPitchPoint() {
         return pitchPoint;
@@ -83,11 +84,12 @@ public class TeethGeometry {
                 "<body>\n" +
                 "\n" +
                 "<svg height=\"400\" width=\"400\">\n" +
-                " <path id=\"lineBC\" d=\"M%f %f L%f %f L%f %f L%f %f L%f %f L%f %f L%f %f L%f %f L%f %f\" \n" +
+                " <path id=\"lineBC\" d=\"M%1$f %2$f L%3$f %4$f L%5$f %6$f L%7$f %8$f " +
+                "L%9$f %10$f A%23$f %23$f 0 0 1 %11$f %12$f " +
+                "L%13$f %14$f A%23$f %23$f 0 0 1 %15$f %16$f L%17$f %18$f\" \n" +
                 "  stroke=\"red\" stroke-width=\"1\" fill=\"none\" />\n" +
-                "  <circle cx=\"%f\" cy=\"%f\" r=\"1\" stroke=\"blue\" stroke-width=\"1\" fill=\"blue\" />\n" +
-                "<path id=\"arcRoot1\" d=\"M%9$f %10$f A%21$f %21$f 0 0 1 %11$f %12$f\"\n"+
-                "  stroke=\"green\" stroke-width=\"1\" fill=\"none\" />\n" +
+                "  <circle cx=\"%19$f\" cy=\"%20$f\" r=\"1\" stroke=\"blue\" stroke-width=\"1\" fill=\"blue\" />\n" +
+                "  <circle cx=\"%21$f\" cy=\"%22$f\" r=\"1\" stroke=\"green\" stroke-width=\"1\" fill=\"blue\" />\n" +
                 "  Sorry, your browser does not support inline SVG.  \n" +
                 "</svg> \n" +
                 " \n" +
@@ -105,7 +107,8 @@ public class TeethGeometry {
                 this.getWorkPt2().getX()*scale, this.getWorkPt2().getY()*scale,            // 15,16
                 this.getPitchPoint3().getX()*scale, this.getPitchPoint3().getY()*scale,    // 17,18
                 this.dedendumFillet1Center.getX()*scale, this.dedendumFillet1Center.getY()*scale, // 19,20
-                this.dedendumFilletRadius.toDouble()*scale  // 21
+                this.dedendumFillet2Center.getX()*scale, this.dedendumFillet2Center.getY()*scale, // 21,22
+                this.dedendumFilletRadius.toDouble()*scale  // 23
                 );
     }
 
@@ -155,5 +158,13 @@ public class TeethGeometry {
 
     public Rational getDedendumFilletRadius() {
         return dedendumFilletRadius;
+    }
+
+    public void setDedendumFillet2Center(Point dedendumFillet2Center) {
+        this.dedendumFillet2Center = dedendumFillet2Center;
+    }
+
+    public Point getDedendumFillet2Center() {
+        return dedendumFillet2Center;
     }
 }
