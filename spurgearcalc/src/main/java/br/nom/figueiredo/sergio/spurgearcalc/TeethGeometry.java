@@ -1,5 +1,7 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.spurgearcalc.svg.SVGPath;
+
 import java.util.Locale;
 
 public class TeethGeometry {
@@ -74,42 +76,53 @@ public class TeethGeometry {
      * &lt;/html&gt;
      *     
      * </pre>
-     * @param scale
-     * @return
+     * @param scale aumento ou redução na apresentacao.
+     *
+     * @return pagina html
      */
-    public String svgPath(int scale) {
+    public String html(Rational scale) {
 
-        String htmlTemplate = "<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "<body>\n" +
-                "\n" +
-                "<svg height=\"400\" width=\"400\">\n" +
-                " <path id=\"lineBC\" d=\"M%1$f %2$f L%3$f %4$f L%5$f %6$f L%7$f %8$f " +
-                "L%9$f %10$f A%23$f %23$f 0 0 1 %11$f %12$f " +
-                "L%13$f %14$f A%23$f %23$f 0 0 1 %15$f %16$f L%17$f %18$f\" \n" +
-                "  stroke=\"red\" stroke-width=\"1\" fill=\"none\" />\n" +
-                "  <circle cx=\"%19$f\" cy=\"%20$f\" r=\"1\" stroke=\"blue\" stroke-width=\"1\" fill=\"blue\" />\n" +
-                "  <circle cx=\"%21$f\" cy=\"%22$f\" r=\"1\" stroke=\"green\" stroke-width=\"1\" fill=\"blue\" />\n" +
-                "  Sorry, your browser does not support inline SVG.  \n" +
-                "</svg> \n" +
-                " \n" +
-                "</body>\n" +
-                "</html>";
+        String htmlTemplate = """
+<!DOCTYPE html>
+<html>
+<body>
+   <svg height="400" width="400">
+      <path id="lineBC" d="%2$s"
+            stroke="red" stroke-width="1" fill="none"
+            transform="scale(1$f)"/>
+      <circle cx="%2$f" cy="%30$f" r="1" stroke="blue" stroke-width="1" fill="blue"
+              transform="scale(1$f)"/>
+      <circle cx="%4$f" cy="%5$f" r="1" stroke="green" stroke-width="1" fill="blue"
+              transform="scale(1$f)"/>
+      Sorry, your browser does not support inline SVG.
+   </svg>
+</body>
+</html>
+""";
 
         return String.format(Locale.ENGLISH, htmlTemplate,
-                this.getPitchPoint().getX()*scale,this.getPitchPoint().getY()*scale, // 1,2
-                this.getTopPt1().getX()*scale,this.getTopPt1().getY()*scale,               // 3,4
-                this.getTopPt2().getX()*scale,this.getTopPt2().getY()*scale,               // 5,6
-                this.getPitchPoint2().getX()*scale,this.getPitchPoint2().getY()*scale,     // 7,8
-                this.getWorkPt1().getX()*scale, this.getWorkPt1().getY()*scale,            //9,10
-                this.getRootClearancePt1().getX()*scale, this.getRootClearancePt1().getY()*scale, // 11,12
-                this.getRootClearancePt2().getX()*scale, this.getRootClearancePt2().getY()*scale, // 13,14
-                this.getWorkPt2().getX()*scale, this.getWorkPt2().getY()*scale,            // 15,16
-                this.getPitchPoint3().getX()*scale, this.getPitchPoint3().getY()*scale,    // 17,18
-                this.dedendumFillet1Center.getX()*scale, this.dedendumFillet1Center.getY()*scale, // 19,20
-                this.dedendumFillet2Center.getX()*scale, this.dedendumFillet2Center.getY()*scale, // 21,22
-                this.dedendumFilletRadius.toDouble()*scale  // 23
-                );
+                scale.toDouble(),
+                svgPath(),
+                this.dedendumFillet1Center.getX().multiply(scale), this.dedendumFillet1Center.getY().multiply(scale),
+                this.dedendumFillet2Center.getX().multiply(scale), this.dedendumFillet2Center.getY().multiply(scale));
+    }
+
+    public SVGPath svgPath() {
+
+        SVGPath svgPath = new SVGPath();
+        svgPath.move(this.getPitchPoint())
+                .line(this.getTopPt1())
+                .line(this.getTopPt2())
+                .arc(this.dedendumFilletRadius, this.dedendumFilletRadius,
+                        0, 0, 1,
+                        this.getRootClearancePt1())
+                .line(this.getRootClearancePt2())
+                .arc(this.dedendumFilletRadius, this.dedendumFilletRadius,
+                        0, 0, 1,
+                        this.getWorkPt2())
+                .line(this.getPitchPoint3());
+
+        return svgPath;
     }
 
     public void setWorkPt1(Point workPt1) {

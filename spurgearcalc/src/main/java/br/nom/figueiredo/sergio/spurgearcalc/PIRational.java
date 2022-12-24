@@ -7,17 +7,22 @@ package br.nom.figueiredo.sergio.spurgearcalc;
  *
  * Essa classe permite realizar cálculos sem perder a precisão por causa do irracional PI.
  */
-public class PIRational extends Rational {
+public class PIRational implements Value {
 
-    private final Rational piRadians;
+    private final Value offset;
+    private final Value piRadians;
 
-    public PIRational(Rational piRadians, Rational offset) {
-        super(offset.getNumerador(), offset.getDenominador());
+    protected PIRational(Value piRadians, Value offset) {
+        this.offset = offset;
         this.piRadians = piRadians;
     }
 
-    public PIRational(Rational piRadians) {
-        this(piRadians, Rational.ZERO);
+    public static PIRational of(Rational piRadians, Rational offset) {
+        return new PIRational(piRadians, offset);
+    }
+
+    public static PIRational of(Rational piRadians) {
+        return of(piRadians, Rational.ZERO);
     }
 
     public static PIRational toPIRational(Rational other) {
@@ -25,48 +30,88 @@ public class PIRational extends Rational {
     }
 
     public PIRational multiplyPI(Rational piRadians) {
-        return new PIRational(this.piRadians.multiply(piRadians), this);
+        return new PIRational(this.piRadians.multiply(piRadians), offset);
     }
 
     @Override
     public PIRational multiply(double multiplier) {
-        Rational rationalMultiplier = toRational(multiplier);
-        return new PIRational(this.piRadians.multiply(rationalMultiplier).simplify(),  super.multiply(rationalMultiplier).simplify());
+        return new PIRational(this.piRadians.multiply(multiplier),
+                offset.multiply(multiplier));
     }
 
     @Override
-    public Rational divide(Rational other) {
+    public PIRational divide(Value other) {
         return new PIRational(this.piRadians.divide(other),
-                super.divide(other));
+                offset.divide(other));
+    }
+
+    @Override
+    public Value simplify() {
+        return new PIRational(this.piRadians.simplify(),
+                offset.simplify());
+    }
+
+    @Override
+    public Value multiply(long multiplier) {
+        return new PIRational(this.piRadians.multiply(multiplier),
+                offset.multiply(multiplier));
     }
 
     public PIRational addPI(Rational piRadians) {
-        return new PIRational(this.piRadians.add(piRadians), this);
+        return new PIRational(this.piRadians.add(piRadians), offset);
     }
 
     @Override
-    public PIRational add(Rational offset) {
-        return new PIRational(this.piRadians, super.add(offset));
+    public long getNumerador() {
+        return getAproxValue().getNumerador();
     }
 
-    protected Rational getAproxValue() {
-        return this.piRadians.multiply(Rational.PI).add(this).simplify();
+    @Override
+    public long getDenominador() {
+        return getAproxValue().getDenominador();
+    }
+
+    @Override
+    public PIRational add(Value valor) {
+        return new PIRational(this.piRadians, valor.add(this.offset));
+    }
+
+    @Override
+    public PIRational subtract(Value other) {
+        return new PIRational(this.piRadians, offset.subtract(other));
+    }
+
+    @Override
+    public PIRational multiply(Value other) {
+        return new PIRational(this.piRadians.multiply(other),
+                offset.multiply(other));
+    }
+
+    protected Value getAproxValue() {
+        return this.piRadians.multiply(Rational.PI)
+                .add(offset).simplify();
     }
 
     @Override
     public double toDouble() {
-        Rational aprox = this.getAproxValue();
+        Value aprox = this.getAproxValue();
         return aprox.toDouble();
     }
 
     @Override
+    public PIRational adjustSignal() {
+        return new PIRational(this.piRadians.adjustSignal(),
+                offset.adjustSignal());
+    }
+
+    @Override
     public String toString() {
-        return this.piRadians + "*PI + " + super.toString();
+        return this.piRadians + "*PI + " + offset.toString();
     }
 
     @Override
     public PIRational negate() {
-        return new PIRational(this.piRadians.negate(), super.negate());
+        return new PIRational(this.piRadians.negate(), offset.negate());
     }
 
 }

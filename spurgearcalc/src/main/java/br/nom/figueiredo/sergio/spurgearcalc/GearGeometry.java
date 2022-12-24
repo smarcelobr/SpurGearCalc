@@ -12,55 +12,55 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class GearGeometry {
 
-    private Rational pitchRadius;
-    private Rational addendum;
-    private Rational dedendum;
-    private PIRational circularPitch;
-    private Rational workingDepth;
+    private Value pitchRadius;
+    private Value addendum;
+    private Value dedendum;
+    private Value circularPitch;
+    private Value workingDepth;
     private final TeethGeometry teeth = new TeethGeometry();
 
-    public Rational getAddendum() {
-        return addendum;
-    }
-
-    public void setAddendum(Rational addendum) {
-        this.addendum = addendum;
-    }
-
-    public Rational getDedendum() {
-        return dedendum;
-    }
-
-    public void setDedendum(Rational dedendum) {
-        this.dedendum = dedendum;
-    }
-
-    public PIRational getCircularPitch() {
-        return circularPitch;
-    }
-
-    public void setCircularPitch(PIRational circularPitch) {
-        this.circularPitch = circularPitch;
-    }
-
-    public Rational getPitchRadius() {
+    public Value getPitchRadius() {
         return pitchRadius;
     }
 
-    public void setPitchRadius(Rational pitchRadius) {
+    public void setPitchRadius(Value pitchRadius) {
         this.pitchRadius = pitchRadius;
+    }
+
+    public Value getAddendum() {
+        return addendum;
+    }
+
+    public void setAddendum(Value addendum) {
+        this.addendum = addendum;
+    }
+
+    public Value getDedendum() {
+        return dedendum;
+    }
+
+    public void setDedendum(Value dedendum) {
+        this.dedendum = dedendum;
+    }
+
+    public Value getCircularPitch() {
+        return circularPitch;
+    }
+
+    public void setCircularPitch(Value circularPitch) {
+        this.circularPitch = circularPitch;
+    }
+
+    public Value getWorkingDepth() {
+        return workingDepth;
+    }
+
+    public void setWorkingDepth(Value workingDepth) {
+        this.workingDepth = workingDepth;
     }
 
     public TeethGeometry getTeeth() {
         return teeth;
-    }
-
-    public Rational getWorkingDepth() {
-        return workingDepth;
-    }
-
-    public void setWorkingDepth(Rational workingDepth) {
-        this.workingDepth = workingDepth;
     }
 
     @Override

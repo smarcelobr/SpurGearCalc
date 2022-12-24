@@ -9,25 +9,23 @@ class PointTest {
     @Test
     void nearestPointAt() {
 
-        Point A = new Point(2, 3);
-        Line r = new Line(1, 1, 5);
+        Point A = Point.of(2, 3);
+        Line r = Line.of(1, 1, 5);
 
         Point nearest = A.nearestPointAt(r);
 
-        assertEquals(-3, nearest.getX());
-        assertEquals(-2, nearest.getY());
+        assertEquals(Point.of(-3,-2),  nearest);
 
-        r = new Line(2, 1, 5);
+        r = Line.of(2, 1, 5);
         nearest = A.nearestPointAt(r);
 
-        assertEquals(-2.8, nearest.getX());
-        assertEquals(0.6, nearest.getY());
+        assertEquals(Point.of(-2.8, 0.6),  nearest);
 
-        r = new Line(8, -5, 0);
+        r = Line.of(8, -5, 0);
         nearest = A.nearestPointAt(r);
 
-        assertEquals(1.9101123595505618, nearest.getX());
-        assertEquals(3.056179775280899, nearest.getY());
+        assertEquals(Point.of(Rational.of(170,89),
+                Rational.of(272,89)), nearest);
 
     }
 }

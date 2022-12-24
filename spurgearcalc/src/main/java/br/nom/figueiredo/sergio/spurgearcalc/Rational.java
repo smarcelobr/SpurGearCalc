@@ -1,6 +1,6 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
-public class Rational {
+public class Rational implements Value {
 
     public static final Rational ONE = new Rational(1,1);
     public static final Rational ZERO = new Rational(0,1);
@@ -9,96 +9,97 @@ public class Rational {
     private final long numerador;
     private final long denominador;
 
-    public Rational(long numerador, long denominador) {
+    protected Rational(long numerador, long denominador) {
         this.numerador = numerador;
         this.denominador = denominador;
     }
 
-    public Rational(long integer) {
-        this.numerador = integer;
-        this.denominador = 1L;
+    public static Rational of(long integer) {
+        return new Rational(integer, 1);
     }
 
+    public static Rational of(long numerador, long denominador) {
+        return new Rational(numerador, denominador);
+    }
+
+    @Override
     public long getNumerador() {
         return numerador;
     }
 
+    @Override
     public long getDenominador() {
         return denominador;
     }
 
-    public Rational add(Rational other) {
-        long lcm = this.lcm(other);
+    @Override
+    public Value add(Value other) {
+        long lcm = this.lcm(this.denominador, other.getDenominador());
         return new Rational(this.numerador * (lcm / this.denominador) +
-                other.numerador * (lcm / other.denominador)
+                other.getNumerador() * (lcm / other.getDenominador())
                 , lcm);
     }
 
-    public Rational subtract(Rational other) {
-        long lcm = this.lcm(other);
+    @Override
+    public Value subtract(Value other) {
+        long lcm = Rational.lcm(this.denominador, other.getDenominador());
         return new Rational(this.numerador * (lcm / this.denominador) -
-                other.numerador * (lcm / other.denominador)
+                other.getNumerador() * (lcm / other.getDenominador())
                 , lcm);
     }
 
-    public Rational multiply(Rational other) {
-        return new Rational(this.numerador * other.numerador,
-                this.denominador * other.denominador);
+    @Override
+    public Rational multiply(Value other) {
+        return new Rational(this.numerador * other.getNumerador(),
+                this.denominador * other.getDenominador());
     }
 
-    public Rational divide(Rational other) {
-        return new Rational(this.numerador * other.denominador,
-                this.denominador * other.numerador);
+    @Override
+    public Rational divide(Value other) {
+        return new Rational(this.numerador * other.getDenominador(),
+                this.denominador * other.getNumerador());
     }
 
-    //  least common multiple
-    public long lcm(Rational other) {
-        long d1 = 1L;
-        long d2 = 1L;
-        while ((d1 * this.denominador) != (d2 * other.denominador)) {
-
-            if ((d1 * this.denominador) < (d2 * other.denominador)) {
-                d1 = Math.max((other.denominador * d2) / this.denominador, d1 + 1);
-            } else {
-                d2 = Math.max((this.denominador * d1) / other.denominador, d2 + 1);
-            }
-
-        }
-        return d1 * this.denominador;
+    /**
+     * Calcula o Least Common Multiple usando o GCF.
+     *
+     * @param v1 valor 1
+     * @param v2 valor 2
+     * @return Mínimo Multiplo Comum.
+     */
+    //
+    public static long lcm(long v1, long v2) {
+        return (v1*v2)/gcf(v1,v2);
     }
 
-    // greatest common factor
+    /**
+     * Greatest Common Factor
+     * Usando "Euclid's Algorithm GCF Calculator"
+     * @param l1 valor 1
+     * @param l2 valor 2
+     *
+     * @return gcf
+     */
     public static long gcf(final long l1, final long l2) {
         assert l1!=0;
         assert l2!=0;
 
-        long d1 = 1;
-        long d2 = 1;
-
-        long factor1;
-        long factor2;
-        while (true) {
-            factor1 = Math.abs(l1)/d1;
-            factor2 = Math.abs(l2)/d2;
-            if (factor1 == factor2) {
-                break;
-            } else if (factor1<factor2) {
-                do
-                    d2++;
-                while ((l2%d2)!=0);
-            } else {
-                do
-                   d1++;
-                while ((l1%d1)!=0);
-            }
+        long maior = Math.max(Math.abs(l1),Math.abs(l2));
+        long menor = Math.min(Math.abs(l1),Math.abs(l2));
+        while ((maior%menor)!=0) {
+            long resto = (maior%menor);
+            maior = menor;
+            menor = resto;
         }
+        return menor;
 
-        return factor1;
     }
 
+    @Override
     public Rational simplify() {
         if (this.numerador!=0 && this.denominador != 0) {
             long gcf = gcf(this.numerador, this.denominador);
+
             return new Rational(this.numerador / gcf, this.denominador / gcf);
         } else {
             return this;
@@ -111,17 +112,27 @@ public class Rational {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        Rational thisSimplified = this.simplify();
-        Rational oSimplified = ((Rational) o).simplify();
+        Rational thisSimplified = this.simplify().adjustSignal();
+        Rational oSimplified = ((Rational) o).simplify().adjustSignal();
 
         return new org.apache.commons.lang3.builder.EqualsBuilder()
                 .append(thisSimplified.numerador, oSimplified.numerador)
                 .append(thisSimplified.denominador, oSimplified.denominador).isEquals();
     }
 
+    // acerta o sinal de modo que o negativo fique sempre no numerador.
+    public Rational adjustSignal() {
+        if (this.denominador>=0) {
+            // nenhuma modificação de sinal é necessária
+            return this;
+        }
+        // inverte os sinais de modo que tudo fique positivo ou que o negativo fique no numerador:
+        return new Rational(this.numerador*-1, this.denominador*-1);
+    }
+
     @Override
     public int hashCode() {
-        Rational thisSimplified = this.simplify();
+        Rational thisSimplified = this.simplify().adjustSignal();
         return new org.apache.commons.lang3.builder.HashCodeBuilder(17, 37)
                 .append(thisSimplified.numerador).append(thisSimplified.denominador).toHashCode();
     }
@@ -140,10 +151,12 @@ public class Rational {
         return thisStr + simplfiedStr;
     }
 
+    @Override
     public Rational multiply(long multiplier) {
         return new Rational(this.numerador*multiplier, this.denominador);
     }
 
+    @Override
     public Rational multiply(double multiplier) {
         return this.multiply(toRational(multiplier));
     }
@@ -202,6 +215,7 @@ public class Rational {
         return this.getNumerador() / (double) this.getDenominador();
     }
 
+    @Override
     public Rational negate() {
         return new Rational(-this.numerador, this.denominador);
     }

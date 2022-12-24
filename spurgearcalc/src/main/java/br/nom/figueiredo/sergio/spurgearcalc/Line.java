@@ -1,5 +1,8 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.Locale;
 
 /**
@@ -12,25 +15,29 @@ import java.util.Locale;
  */
 public class Line {
 
-    private final double a;
-    private final double b;
-    private final double c;
+    private final Value a;
+    private final Value b;
+    private final Value c;
 
-    public Line(double a, double b, double c) {
+    private Line(Value a, Value b, Value c) {
         this.a = a;
         this.b = b;
         this.c = c;
     }
 
-    public double getA() {
+    public static Line of(int a, int b, int c) {
+        return Line.of(Rational.of(a), Rational.of(b), Rational.of(c));
+    }
+
+    public Value getA() {
         return a;
     }
 
-    public double getB() {
+    public Value getB() {
         return b;
     }
 
-    public double getC() {
+    public Value getC() {
         return c;
     }
 
@@ -40,7 +47,7 @@ public class Line {
      * @param pointA ponto um
      * @param pointB ponto dois
      */
-    public Line(Point pointA, Point pointB) {
+    public static Line of(Point pointA, Point pointB) {
         /*
         Matrix = | Xa Ya 1 |
                  | Xb Yb 1 |
@@ -49,9 +56,14 @@ public class Line {
         Determinante(Matrix) = 0
 
          */
-        this(pointA.getY() - pointB.getY(),
-             pointB.getX() - pointA.getX(),
-             pointA.getX() * pointB.getY() - pointA.getY() * pointB.getX());
+        Value a = pointA.getY().subtract(pointB.getY());
+        Value b = pointB.getX().subtract(pointA.getX());
+        Value c = pointA.getX().multiply(pointB.getY()).subtract(pointA.getY().multiply(pointB.getX()));
+        return Line.of(a, b, c);
+    }
+
+    public static Line of(Value a, Value b, Value c) {
+        return new Line(a.simplify(), b.simplify(), c.simplify());
     }
 
     /**
@@ -65,8 +77,8 @@ public class Line {
      * @param x posicao no eixo X
      * @return ponto na reta que passa em X
      */
-    public Point pointAtX(double x) {
-        return new Point(x, -(a * x + c) / b);
+    public Point pointAtX(Value x) {
+        return Point.of(x, a.multiply(x).add(c).negate().divide(b).simplify());
     }
 
     /**
@@ -83,10 +95,12 @@ public class Line {
      */
     public Point intersection(Line other) {
 
-        double iX = (this.b * other.c - other.b * this.c) / (this.a * other.b - other.a * this.b);
-        double iY = (other.a * this.c - this.a * other.c) / (this.a * other.b - other.a * this.b);
+        // x = (b1*c2 - b2*c1) / (a1*b2-a2*b1)
+        Value iX = this.b.multiply(other.c).subtract(other.b.multiply(this.c)).divide(this.a.multiply(other.b).subtract(other.a.multiply(this.b)));
+        // y = (a2*c1 - a1*c2) / (a1*b2 - a2*b1)
+        Value iY = other.a.multiply(this.c).subtract(this.a.multiply(other.c)).divide(this.a.multiply(other.b).subtract(other.a.multiply(this.b)));
 
-        return new Point(iX, iY);
+        return Point.of(iX, iY);
     }
 
     /**
@@ -125,12 +139,19 @@ public class Line {
      * @return formula da reta perpendicular no ponto especificado.
      */
     public Line perpendicularAt(Point intersectionPoint) {
-        return new Line(-this.b, this.a, this.b* intersectionPoint.getX() - this.a*intersectionPoint.getY());
+        // a = -bx
+        Value newA = this.b.negate();
+        // b = ay
+        Value newB = this.a;
+        // c = b*PTx - a*PTy
+        Value newC = this.b.multiply(intersectionPoint.getX()).subtract(this.a.multiply(intersectionPoint.getY()));
+
+        return Line.of(newA, newB, newC);
     }
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH,"[%f]x + [%f]y + [%f]", a, b, c);
+        return String.format(Locale.ENGLISH,"[%s]x + [%s]y + [%s]", a, b, c);
     }
 
     /**
@@ -138,7 +159,48 @@ public class Line {
      *
      * @return slope da reta
      */
-    public Rational slope() {
-        return Rational.toRational(-this.a, this.b);
+    public Value slope() {
+        // -a/b
+        return this.a.negate().divide(this.b);
+    }
+
+    public Point pointAtX(int vX) {
+        return this.pointAtX(Rational.of(vX));
+    }
+
+    /**
+     * Returns a point array with the interpolation between two points.
+     *
+     * @param start start point
+     * @param end end point
+     * @param numPoints number of between points
+     * @return array of between points.
+     */
+    public Point[] interpolation(Point start, Point end, int numPoints) {
+        Point[] points = new Point[numPoints];
+        // stepX = (end.X - start.X) / (numPoints+1)
+        Value step = end.getX().subtract(start.getX())
+                .divide(Rational.of(numPoints+1L)).simplify();
+        for (int idx=0; idx<numPoints; idx++) {
+            Value nX = start.getX().add(step.multiply(idx + 1L)).simplify();
+            points[idx] = this.pointAtX(nX);
+        }
+        return points;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Line line = (Line) o;
+
+        return new EqualsBuilder().append(a, line.a).append(b, line.b).append(c, line.c).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(a).append(b).append(c).toHashCode();
     }
 }

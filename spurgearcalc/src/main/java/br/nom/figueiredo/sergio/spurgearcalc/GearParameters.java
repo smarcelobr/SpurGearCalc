@@ -12,7 +12,7 @@ public class GearParameters {
     public GearParameters(Integer numTeeth, Rational module) {
         this.numTeeth = numTeeth;
         this.module = module;
-        this.pressureAngle = new PIRational(new Rational(1,9)); // 20° ou PI/9
+        this.pressureAngle = PIRational.of(Rational.of(1,9)); // 20° ou PI/9
     }
 
     public Integer getNumTeeth() {
