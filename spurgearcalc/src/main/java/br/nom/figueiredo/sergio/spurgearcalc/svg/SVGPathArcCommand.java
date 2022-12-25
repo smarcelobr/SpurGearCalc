@@ -1,7 +1,9 @@
 package br.nom.figueiredo.sergio.spurgearcalc.svg;
 
+import br.nom.figueiredo.sergio.math.Rational;
 import br.nom.figueiredo.sergio.spurgearcalc.Point;
-import br.nom.figueiredo.sergio.spurgearcalc.Rational;
+
+import java.util.Locale;
 
 /**
  * ARC
@@ -30,7 +32,7 @@ public class SVGPathArcCommand implements SVGPathCommand {
 
     @Override
     public String render() {
-        return String.format("A%f %f %d %d %d %f %f",
+        return String.format(Locale.ENGLISH,"A%f %f %d %d %d %f %f",
                 rx.toDouble(),ry.toDouble(),
                 xAxisRotation, largeArcFlag, sweepFlag,
                 end.getX().toDouble(), end.getY().toDouble());

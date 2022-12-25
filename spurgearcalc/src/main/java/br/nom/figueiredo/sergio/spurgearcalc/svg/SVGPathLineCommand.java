@@ -2,6 +2,8 @@ package br.nom.figueiredo.sergio.spurgearcalc.svg;
 
 import br.nom.figueiredo.sergio.spurgearcalc.Point;
 
+import java.util.Locale;
+
 public class SVGPathLineCommand implements SVGPathCommand {
 
     private final Point end;
@@ -12,6 +14,6 @@ public class SVGPathLineCommand implements SVGPathCommand {
 
     @Override
     public String render() {
-        return String.format("M%f %f",end.getX().toDouble(), end.getY().toDouble());
+        return String.format(Locale.ENGLISH,"L%f %f",end.getX().toDouble(), end.getY().toDouble());
     }
 }

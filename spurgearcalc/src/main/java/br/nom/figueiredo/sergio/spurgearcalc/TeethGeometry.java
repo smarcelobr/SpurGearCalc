@@ -1,5 +1,6 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.math.Rational;
 import br.nom.figueiredo.sergio.spurgearcalc.svg.SVGPath;
 
 import java.util.Locale;
@@ -87,40 +88,40 @@ public class TeethGeometry {
 <html>
 <body>
    <svg height="400" width="400">
-      <path id="lineBC" d="%2$s"
-            stroke="red" stroke-width="1" fill="none"
-            transform="scale(1$f)"/>
-      <circle cx="%2$f" cy="%30$f" r="1" stroke="blue" stroke-width="1" fill="blue"
-              transform="scale(1$f)"/>
-      <circle cx="%4$f" cy="%5$f" r="1" stroke="green" stroke-width="1" fill="blue"
-              transform="scale(1$f)"/>
+      <path id="lineBC" d="%1$s"
+            stroke="red" stroke-width="1" fill="none"/>
+      <circle cx="%2$f" cy="%3$f" r="1" stroke="blue" stroke-width="0" fill="blue"/>
+      <circle cx="%4$f" cy="%5$f" r="1" stroke="green" stroke-width="0" fill="blue"/>
       Sorry, your browser does not support inline SVG.
    </svg>
 </body>
 </html>
 """;
 
+        Point scaledDedendumFillet1Center = this.dedendumFillet1Center.multiply(scale);
+        Point scaledDedendumFillet2Center = this.dedendumFillet2Center.multiply(scale);
         return String.format(Locale.ENGLISH, htmlTemplate,
-                scale.toDouble(),
-                svgPath(),
-                this.dedendumFillet1Center.getX().multiply(scale), this.dedendumFillet1Center.getY().multiply(scale),
-                this.dedendumFillet2Center.getX().multiply(scale), this.dedendumFillet2Center.getY().multiply(scale));
+                svgPath(scale).render(),
+                scaledDedendumFillet1Center.getX().toDouble(), scaledDedendumFillet1Center.getY().toDouble(),
+                scaledDedendumFillet2Center.getX().toDouble(), scaledDedendumFillet2Center.getY().toDouble());
     }
 
-    public SVGPath svgPath() {
+    public SVGPath svgPath(Rational scale) {
 
         SVGPath svgPath = new SVGPath();
-        svgPath.move(this.getPitchPoint())
-                .line(this.getTopPt1())
-                .line(this.getTopPt2())
-                .arc(this.dedendumFilletRadius, this.dedendumFilletRadius,
+        svgPath.move(this.getPitchPoint().multiply(scale))
+                .line(this.getTopPt1().multiply(scale))
+                .line(this.getTopPt2().multiply(scale))
+                .line(this.getPitchPoint2().multiply(scale))
+                .line(this.getWorkPt1().multiply(scale))
+                .arc(this.dedendumFilletRadius.multiply(scale), this.dedendumFilletRadius.multiply(scale),
                         0, 0, 1,
-                        this.getRootClearancePt1())
-                .line(this.getRootClearancePt2())
-                .arc(this.dedendumFilletRadius, this.dedendumFilletRadius,
+                        this.getRootClearancePt1().multiply(scale))
+                .line(this.getRootClearancePt2().multiply(scale))
+                .arc(this.dedendumFilletRadius.multiply(scale), this.dedendumFilletRadius.multiply(scale),
                         0, 0, 1,
-                        this.getWorkPt2())
-                .line(this.getPitchPoint3());
+                        this.getWorkPt2().multiply(scale))
+                .line(this.getPitchPoint3().multiply(scale));
 
         return svgPath;
     }

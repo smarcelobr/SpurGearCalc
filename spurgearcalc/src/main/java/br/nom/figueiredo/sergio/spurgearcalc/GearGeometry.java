@@ -1,5 +1,6 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.math.Real;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -12,50 +13,50 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class GearGeometry {
 
-    private Value pitchRadius;
-    private Value addendum;
-    private Value dedendum;
-    private Value circularPitch;
-    private Value workingDepth;
+    private Real gearRadius;
+    private Real addendum;
+    private Real dedendum;
+    private Real circularPitch;
+    private Real workingDepth;
     private final TeethGeometry teeth = new TeethGeometry();
 
-    public Value getPitchRadius() {
-        return pitchRadius;
+    public Real getGearRadius() {
+        return gearRadius;
     }
 
-    public void setPitchRadius(Value pitchRadius) {
-        this.pitchRadius = pitchRadius;
+    public void setGearRadius(Real gearRadius) {
+        this.gearRadius = gearRadius;
     }
 
-    public Value getAddendum() {
+    public Real getAddendum() {
         return addendum;
     }
 
-    public void setAddendum(Value addendum) {
+    public void setAddendum(Real addendum) {
         this.addendum = addendum;
     }
 
-    public Value getDedendum() {
+    public Real getDedendum() {
         return dedendum;
     }
 
-    public void setDedendum(Value dedendum) {
+    public void setDedendum(Real dedendum) {
         this.dedendum = dedendum;
     }
 
-    public Value getCircularPitch() {
+    public Real getCircularPitch() {
         return circularPitch;
     }
 
-    public void setCircularPitch(Value circularPitch) {
+    public void setCircularPitch(Real circularPitch) {
         this.circularPitch = circularPitch;
     }
 
-    public Value getWorkingDepth() {
+    public Real getWorkingDepth() {
         return workingDepth;
     }
 
-    public void setWorkingDepth(Value workingDepth) {
+    public void setWorkingDepth(Real workingDepth) {
         this.workingDepth = workingDepth;
     }
 
@@ -66,7 +67,7 @@ public class GearGeometry {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-                .append("pitchRadius", pitchRadius)
+                .append("pitchRadius", gearRadius)
                 .append("addendum", addendum)
                 .append("dedendum", dedendum)
                 .append("circularPitch", circularPitch)

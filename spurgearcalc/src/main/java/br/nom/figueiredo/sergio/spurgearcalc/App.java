@@ -1,5 +1,7 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.math.Rational;
+
 public class App {
     public App() {
     }

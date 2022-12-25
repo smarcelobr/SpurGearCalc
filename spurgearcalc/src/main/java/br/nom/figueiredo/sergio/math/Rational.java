@@ -1,63 +1,73 @@
-package br.nom.figueiredo.sergio.spurgearcalc;
+package br.nom.figueiredo.sergio.math;
 
-public class Rational implements Value {
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 
-    public static final Rational ONE = new Rational(1,1);
-    public static final Rational ZERO = new Rational(0,1);
-    public static final Rational PI = new Rational(62831853,20000000);
+public class Rational implements Real {
 
-    private final long numerador;
-    private final long denominador;
+    public static final Rational ONE = Rational.of(1L,1L);
+    public static final Rational ZERO = Rational.of(0L,1L);
+    public static final Rational PI = Rational.of(62831853L,20000000L);
 
-    protected Rational(long numerador, long denominador) {
+    private final BigInteger numerador;
+    private final BigInteger denominador;
+
+    public static Rational of(BigInteger numerador, BigInteger denominador) {
+        return new Rational(numerador, denominador);
+    }
+
+    protected Rational(BigInteger numerador, BigInteger denominador) {
         this.numerador = numerador;
         this.denominador = denominador;
     }
 
     public static Rational of(long integer) {
-        return new Rational(integer, 1);
+        return Rational.of(integer, 1L);
     }
 
     public static Rational of(long numerador, long denominador) {
-        return new Rational(numerador, denominador);
+        return new Rational(BigInteger.valueOf(numerador), BigInteger.valueOf(denominador));
     }
 
     @Override
-    public long getNumerador() {
+    public BigInteger getNumerador() {
         return numerador;
     }
 
     @Override
-    public long getDenominador() {
+    public BigInteger getDenominador() {
         return denominador;
     }
 
     @Override
-    public Value add(Value other) {
-        long lcm = this.lcm(this.denominador, other.getDenominador());
-        return new Rational(this.numerador * (lcm / this.denominador) +
-                other.getNumerador() * (lcm / other.getDenominador())
+    public Real add(Real other) {
+        Rational thisSimplified = this.simplify().adjustSignal();
+        Real otherSimplified = other.simplify().adjustSignal();
+        BigInteger lcm = Rational.lcm(thisSimplified.denominador,
+                otherSimplified.getDenominador());
+
+        return new Rational(thisSimplified.numerador.multiply(lcm).divide(thisSimplified.denominador)
+                     .add(
+                otherSimplified.getNumerador().multiply(lcm).divide(otherSimplified.getDenominador()))
                 , lcm);
     }
 
     @Override
-    public Value subtract(Value other) {
-        long lcm = Rational.lcm(this.denominador, other.getDenominador());
-        return new Rational(this.numerador * (lcm / this.denominador) -
-                other.getNumerador() * (lcm / other.getDenominador())
-                , lcm);
+    public Real subtract(Real other) {
+        return this.add(other.negate());
     }
 
     @Override
-    public Rational multiply(Value other) {
-        return new Rational(this.numerador * other.getNumerador(),
-                this.denominador * other.getDenominador());
+    public Rational multiply(Real other) {
+        return Rational.of(this.numerador.multiply(other.getNumerador()),
+                this.denominador.multiply(other.getDenominador()));
     }
 
     @Override
-    public Rational divide(Value other) {
-        return new Rational(this.numerador * other.getDenominador(),
-                this.denominador * other.getNumerador());
+    public Rational divide(Real other) {
+        return Rational.of(this.numerador.multiply(other.getDenominador()),
+                this.denominador.multiply(other.getNumerador()));
     }
 
     /**
@@ -68,8 +78,9 @@ public class Rational implements Value {
      * @return Mínimo Multiplo Comum.
      */
     //
-    public static long lcm(long v1, long v2) {
-        return (v1*v2)/gcf(v1,v2);
+    public static BigInteger lcm(BigInteger v1, BigInteger v2) {
+        // (v1*v2)/gcf
+        return v1.multiply(v2).divide(gcf(v1,v2));
     }
 
     /**
@@ -80,14 +91,14 @@ public class Rational implements Value {
      *
      * @return gcf
      */
-    public static long gcf(final long l1, final long l2) {
-        assert l1!=0;
-        assert l2!=0;
+    public static BigInteger gcf(final BigInteger l1, final BigInteger l2) {
+        assert l1.compareTo(BigInteger.ZERO)!=0;
+        assert l2.compareTo(BigInteger.ZERO)!=0;
 
-        long maior = Math.max(Math.abs(l1),Math.abs(l2));
-        long menor = Math.min(Math.abs(l1),Math.abs(l2));
-        while ((maior%menor)!=0) {
-            long resto = (maior%menor);
+        BigInteger maior = l1.abs().max(l2.abs());
+        BigInteger menor = l1.abs().min(l2.abs());
+        while ((maior.mod(menor)).compareTo(BigInteger.ZERO)!=0) {
+            BigInteger resto = maior.mod(menor);
             maior = menor;
             menor = resto;
         }
@@ -97,10 +108,13 @@ public class Rational implements Value {
 
     @Override
     public Rational simplify() {
-        if (this.numerador!=0 && this.denominador != 0) {
-            long gcf = gcf(this.numerador, this.denominador);
+        if (this.denominador.compareTo(BigInteger.ZERO) != 0) {
+            if (this.numerador.compareTo(BigInteger.ZERO)==0) {
+                return Rational.ZERO;
+            }
+            BigInteger gcf = gcf(this.numerador, this.denominador);
 
-            return new Rational(this.numerador / gcf, this.denominador / gcf);
+            return Rational.of(this.numerador.divide(gcf), this.denominador.divide(gcf));
         } else {
             return this;
         }
@@ -122,12 +136,13 @@ public class Rational implements Value {
 
     // acerta o sinal de modo que o negativo fique sempre no numerador.
     public Rational adjustSignal() {
-        if (this.denominador>=0) {
+        if (this.denominador.compareTo(BigInteger.ZERO)>=0) {
             // nenhuma modificação de sinal é necessária
             return this;
         }
         // inverte os sinais de modo que tudo fique positivo ou que o negativo fique no numerador:
-        return new Rational(this.numerador*-1, this.denominador*-1);
+        BigInteger menos1 = BigInteger.valueOf(-1L);
+        return new Rational(this.numerador.multiply(menos1), this.denominador.multiply(menos1));
     }
 
     @Override
@@ -141,11 +156,11 @@ public class Rational implements Value {
     public String toString() {
         Rational thisSimplified = this.simplify();
         String simplfiedStr = "";
-        if (this.getDenominador() != thisSimplified.getDenominador()) {
+        if (this.getDenominador().compareTo(thisSimplified.getDenominador())!=0) {
             simplfiedStr = " (" + thisSimplified + ")";
         }
-        String thisStr = Long.toString(this.getNumerador());
-        if (this.getDenominador()!=1) {
+        String thisStr = this.getNumerador().toString();
+        if (this.getDenominador().compareTo(BigInteger.ONE)!=0) {
             thisStr = thisStr + "/" + this.getDenominador();
         }
         return thisStr + simplfiedStr;
@@ -153,7 +168,7 @@ public class Rational implements Value {
 
     @Override
     public Rational multiply(long multiplier) {
-        return new Rational(this.numerador*multiplier, this.denominador);
+        return new Rational(this.numerador.multiply(BigInteger.valueOf(multiplier)), this.denominador);
     }
 
     @Override
@@ -187,7 +202,7 @@ public class Rational implements Value {
         long secondMultiplier = 1;
         boolean notIntOrIrrational = false;
         long truncatedNumber = (long)number;
-        Rational rationalNumber = new Rational((long)(sign * number * FIRST_MULTIPLIER_MAX), FIRST_MULTIPLIER_MAX);
+        Rational rationalNumber = Rational.of((long)(sign * number * FIRST_MULTIPLIER_MAX), FIRST_MULTIPLIER_MAX);
 
         double error = number - truncatedNumber;
         while( (error >= ERROR) && (firstMultiplier <= FIRST_MULTIPLIER_MAX)){
@@ -206,18 +221,27 @@ public class Rational implements Value {
         }
 
         if(notIntOrIrrational){
-            rationalNumber = new Rational(sign * truncatedNumber, firstMultiplier - secondMultiplier);
+            rationalNumber = Rational.of(sign * truncatedNumber, firstMultiplier - secondMultiplier);
         }
         return rationalNumber;
     }
 
     public double toDouble() {
-        return this.getNumerador() / (double) this.getDenominador();
+        return this.toBigDecimal().doubleValue();
+    }
+
+    @Override
+    public BigDecimal toBigDecimal() {
+        Rational thisSimplified = this.simplify();
+        BigDecimal bdNumerador = new BigDecimal(thisSimplified.getNumerador());
+        BigDecimal bdDenominador = new BigDecimal(thisSimplified.getDenominador());
+        return bdNumerador.setScale(4, RoundingMode.FLOOR).divide(bdDenominador,
+                RoundingMode.FLOOR);
     }
 
     @Override
     public Rational negate() {
-        return new Rational(-this.numerador, this.denominador);
+        return Rational.of(this.numerador.negate(), this.denominador);
     }
 
     public static Rational toRational(double numerador, double denominador) {

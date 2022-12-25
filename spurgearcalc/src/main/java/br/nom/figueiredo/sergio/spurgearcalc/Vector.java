@@ -1,49 +1,62 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.math.Rational;
+import br.nom.figueiredo.sergio.math.Real;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Vector {
-    private final Value x;
-    private final Value y;
+    private final Real x;
+    private final Real y;
 
     public Vector(double x, double y) {
         this.x = Rational.toRational(x);
         this.y = Rational.toRational(y);
     }
 
-    public Vector(Value x, Value y) {
+    public Vector(Real x, Real y) {
         this.x = x;
         this.y = y;
     }
 
-    public Value getX() {
+    public Real getX() {
         return x;
     }
 
-    public Value getY() {
+    public Real getY() {
         return y;
     }
 
     public Vector add(Vector other) {
-        return new Vector(this.getX().add(other.getX()),
-                this.getY().add(other.getY()));
-    }
-
-    public Vector subtract(Vector other) {
-        return new Vector(this.getX().subtract(other.getX()),
-                this.getY().subtract(other.getY()));
+        return new Vector(this.getX().add(other.getX()).simplify(),
+                this.getY().add(other.getY()).simplify());
     }
 
     public Point add(Point point) {
-        return Point.of(this.getX().add(point.getX()),
-                this.getY().add(point.getY()));
+        return Point.of(this.getX().add(point.getX()).simplify(),
+                this.getY().add(point.getY()).simplify());
     }
 
+    public Vector subtract(Vector other) {
+        return new Vector(this.getX().subtract(other.getX()).simplify(),
+                this.getY().subtract(other.getY()).simplify());
+    }
+
+    public Vector multiply(Rational value) {
+        return new Vector(this.x.multiply(value).simplify(), this.y.multiply(value).simplify());
+    }
+
+    private Vector divide(Rational divisor) {
+        return new Vector(this.x.divide(divisor).simplify(), this.y.divide(divisor).simplify());
+    }
+
+    // raiz( x^2 + y^2 )
     public Rational magnitude() {
-        // raiz(x^2 + y^2)
-        return Rational.toRational(
-                Math.sqrt( this.x.multiply(this.x).add(this.y.multiply(this.y)).toDouble() ));
+
+        // q = x^2 + y^2
+        Real q = this.x.multiply(this.x).add(this.y.multiply(this.y));
+
+        return Rational.of( q.getNumerador().sqrt(), q.getDenominador().sqrt());
     }
 
     /**
@@ -64,14 +77,6 @@ public class Vector {
         return this.multiply(Rational.of(-1));
     }
 
-    private Vector divide(Rational divisor) {
-        return new Vector(this.x.divide(divisor), this.y.divide(divisor));
-    }
-
-    public Vector multiply(Rational value) {
-        return new Vector(this.x.multiply(value), this.y.multiply(value));
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,5 +91,10 @@ public class Vector {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(x).append(y).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Vector{ x=[%s], y=[%s] }",this.x, this.y);
     }
 }

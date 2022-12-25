@@ -1,5 +1,7 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.math.Rational;
+import br.nom.figueiredo.sergio.math.Real;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -15,11 +17,11 @@ import java.util.Locale;
  */
 public class Line {
 
-    private final Value a;
-    private final Value b;
-    private final Value c;
+    private final Real a;
+    private final Real b;
+    private final Real c;
 
-    private Line(Value a, Value b, Value c) {
+    private Line(Real a, Real b, Real c) {
         this.a = a;
         this.b = b;
         this.c = c;
@@ -29,15 +31,15 @@ public class Line {
         return Line.of(Rational.of(a), Rational.of(b), Rational.of(c));
     }
 
-    public Value getA() {
+    public Real getA() {
         return a;
     }
 
-    public Value getB() {
+    public Real getB() {
         return b;
     }
 
-    public Value getC() {
+    public Real getC() {
         return c;
     }
 
@@ -55,14 +57,22 @@ public class Line {
 
         Determinante(Matrix) = 0
 
+        Ya*x + Xb*y + Xa*Yb - Yb*x - Xa*y - Ya*Xb = 0
+        (Ya-Yb)x + (Xb-Xa)y + (Xa*Yb)-(Ya-Xb) = 0
+              ax +       by +               c = 0
+
+        a = (Ya-Yb)
+        b = (Xb-Xa)
+        c = (Xa*Yb)-(Ya-Xb)
          */
-        Value a = pointA.getY().subtract(pointB.getY());
-        Value b = pointB.getX().subtract(pointA.getX());
-        Value c = pointA.getX().multiply(pointB.getY()).subtract(pointA.getY().multiply(pointB.getX()));
+
+        Real a = pointA.getY().subtract(pointB.getY());
+        Real b = pointB.getX().subtract(pointA.getX());
+        Real c = pointA.getX().multiply(pointB.getY()).subtract(pointA.getY().multiply(pointB.getX()));
         return Line.of(a, b, c);
     }
 
-    public static Line of(Value a, Value b, Value c) {
+    public static Line of(Real a, Real b, Real c) {
         return new Line(a.simplify(), b.simplify(), c.simplify());
     }
 
@@ -77,7 +87,7 @@ public class Line {
      * @param x posicao no eixo X
      * @return ponto na reta que passa em X
      */
-    public Point pointAtX(Value x) {
+    public Point pointAtX(Real x) {
         return Point.of(x, a.multiply(x).add(c).negate().divide(b).simplify());
     }
 
@@ -96,9 +106,9 @@ public class Line {
     public Point intersection(Line other) {
 
         // x = (b1*c2 - b2*c1) / (a1*b2-a2*b1)
-        Value iX = this.b.multiply(other.c).subtract(other.b.multiply(this.c)).divide(this.a.multiply(other.b).subtract(other.a.multiply(this.b)));
+        Real iX = this.b.multiply(other.c).subtract(other.b.multiply(this.c)).divide(this.a.multiply(other.b).subtract(other.a.multiply(this.b)));
         // y = (a2*c1 - a1*c2) / (a1*b2 - a2*b1)
-        Value iY = other.a.multiply(this.c).subtract(this.a.multiply(other.c)).divide(this.a.multiply(other.b).subtract(other.a.multiply(this.b)));
+        Real iY = other.a.multiply(this.c).subtract(this.a.multiply(other.c)).divide(this.a.multiply(other.b).subtract(other.a.multiply(this.b)));
 
         return Point.of(iX, iY);
     }
@@ -140,11 +150,11 @@ public class Line {
      */
     public Line perpendicularAt(Point intersectionPoint) {
         // a = -bx
-        Value newA = this.b.negate();
+        Real newA = this.b.negate();
         // b = ay
-        Value newB = this.a;
+        Real newB = this.a;
         // c = b*PTx - a*PTy
-        Value newC = this.b.multiply(intersectionPoint.getX()).subtract(this.a.multiply(intersectionPoint.getY()));
+        Real newC = this.b.multiply(intersectionPoint.getX()).subtract(this.a.multiply(intersectionPoint.getY()));
 
         return Line.of(newA, newB, newC);
     }
@@ -159,7 +169,7 @@ public class Line {
      *
      * @return slope da reta
      */
-    public Value slope() {
+    public Real slope() {
         // -a/b
         return this.a.negate().divide(this.b);
     }
@@ -179,10 +189,10 @@ public class Line {
     public Point[] interpolation(Point start, Point end, int numPoints) {
         Point[] points = new Point[numPoints];
         // stepX = (end.X - start.X) / (numPoints+1)
-        Value step = end.getX().subtract(start.getX())
+        Real step = end.getX().subtract(start.getX())
                 .divide(Rational.of(numPoints+1L)).simplify();
         for (int idx=0; idx<numPoints; idx++) {
-            Value nX = start.getX().add(step.multiply(idx + 1L)).simplify();
+            Real nX = start.getX().add(step.multiply(idx + 1L)).simplify();
             points[idx] = this.pointAtX(nX);
         }
         return points;

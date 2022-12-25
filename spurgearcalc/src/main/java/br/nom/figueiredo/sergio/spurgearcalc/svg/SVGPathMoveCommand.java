@@ -2,6 +2,8 @@ package br.nom.figueiredo.sergio.spurgearcalc.svg;
 
 import br.nom.figueiredo.sergio.spurgearcalc.Point;
 
+import java.util.Locale;
+
 public class SVGPathMoveCommand implements SVGPathCommand {
 
     private final Point point;
@@ -16,6 +18,6 @@ public class SVGPathMoveCommand implements SVGPathCommand {
 
     @Override
     public String render() {
-        return String.format("M%f %f",point.getX().toDouble(), point.getY().toDouble());
+        return String.format(Locale.ENGLISH,"M%f %f",point.getX().toDouble(), point.getY().toDouble());
     }
 }

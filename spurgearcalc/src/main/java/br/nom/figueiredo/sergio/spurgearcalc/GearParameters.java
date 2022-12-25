@@ -1,5 +1,6 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.math.Rational;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -7,12 +8,12 @@ public class GearParameters {
 
     private final Integer numTeeth;
     private final Rational module;
-    private final PIRational pressureAngle; // em radians
+    private final Rational pressureAngle; // em radians
 
     public GearParameters(Integer numTeeth, Rational module) {
         this.numTeeth = numTeeth;
         this.module = module;
-        this.pressureAngle = PIRational.of(Rational.of(1,9)); // 20° ou PI/9
+        this.pressureAngle = Rational.of(1,9).multiply(Rational.PI); // 20° ou PI/9
     }
 
     public Integer getNumTeeth() {
@@ -23,7 +24,7 @@ public class GearParameters {
         return module;
     }
 
-    public PIRational getPressureAngle() {
+    public Rational getPressureAngle() {
         return pressureAngle;
     }
 

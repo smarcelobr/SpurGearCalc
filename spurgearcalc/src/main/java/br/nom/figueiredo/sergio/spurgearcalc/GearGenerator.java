@@ -1,11 +1,14 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.math.Rational;
+import br.nom.figueiredo.sergio.math.Real;
+
 public class GearGenerator {
 
-    private static final Value ADDENDUM_MODULE = Rational.ONE;
-    private static final Value DEDENDUM_MODULE = Rational.of(5, 4); // 1.25
-    private static final Value WORKING_DEPTH_MODULE = Rational.of(2);
-    private static final Value FILLET_RADIUS_FACTOR = Rational.of(38,100).simplify(); // 0.38
+    private static final Real ADDENDUM_MODULE = Rational.ONE;
+    private static final Real DEDENDUM_MODULE = Rational.of(5, 4); // 1.25
+    private static final Real WORKING_DEPTH_MODULE = Rational.of(2);
+    private static final Real FILLET_RADIUS_FACTOR = Rational.of(38,100).simplify(); // 0.38
 
     private GearGenerator() {
     }
@@ -15,16 +18,19 @@ public class GearGenerator {
 
         // tamanho do raio de ação da engrenagem
         Rational module = gearParameters.getModule();
-        geometry.setPitchRadius(module
+
+        // gearDiameter = (module * numTeeth)
+        // gearRadius = (module * numTeeth)/2
+        geometry.setGearRadius(module
                 .multiply(gearParameters.getNumTeeth())
                 .divide(Rational.of(2)).simplify());
 
         // tamanho de um dente completo.
-        geometry.setCircularPitch(PIRational.of(module));
+        geometry.setCircularPitch(module.multiply(Rational.PI));
 
-        Value addendum = module.multiply(ADDENDUM_MODULE).simplify();
+        Real addendum = module.multiply(ADDENDUM_MODULE).simplify();
         geometry.setAddendum(addendum);
-        Value dedendum = module.multiply(DEDENDUM_MODULE).simplify();
+        Real dedendum = module.multiply(DEDENDUM_MODULE).simplify();
         geometry.setDedendum(dedendum);
 
         geometry.setWorkingDepth(module.multiply(WORKING_DEPTH_MODULE).simplify());
@@ -34,9 +40,9 @@ public class GearGenerator {
 
         Vector vCircularPitch = new Vector(geometry.getCircularPitch(),Rational.ZERO);
 
-        teeth.setPitchPoint( Point.of(Rational.ZERO, geometry.getPitchRadius()) );
-        teeth.setPitchPoint2( Point.of(geometry.getCircularPitch().divide(Rational.of(2)), geometry.getPitchRadius()) );
-        teeth.setPitchPoint3( Point.of(geometry.getCircularPitch(), geometry.getPitchRadius()) );
+        teeth.setPitchPoint( Point.of(Rational.ZERO, geometry.getGearRadius()) );
+        teeth.setPitchPoint2( Point.of(geometry.getCircularPitch().divide(Rational.of(2)), geometry.getGearRadius()) );
+        teeth.setPitchPoint3( Point.of(geometry.getCircularPitch(), geometry.getGearRadius()) );
 
         teeth.setTopPt1( teeth.getPitchPoint().add(Point.of( tanPressureAngle.multiply(addendum), addendum)) );
         teeth.setTopPt2( teeth.getPitchPoint2().add(Point.of( tanPressureAngle.multiply(addendum).negate(), addendum)) );
@@ -67,8 +73,8 @@ public class GearGenerator {
         teeth.setRootClearancePt2(dedendumFillet2Center.nearestPointAt(rootLine));
 
         System.out.printf("fillet radius: %s\n", filletRadius.toDouble());
-        System.out.printf("distancia da raiz do dente: %f\n", teeth.getDedendumFillet1Center().vectorTo(rootLine).magnitude());
-        System.out.printf("distancia da superfície do dente: %f\n", teeth.getDedendumFillet1Center().vectorTo(face2Line).magnitude());
+        System.out.printf("distancia da raiz do dente: %s\n", teeth.getDedendumFillet1Center().vectorTo(rootLine).magnitude());
+        System.out.printf("distancia da superfície do dente: %s\n", teeth.getDedendumFillet1Center().vectorTo(face2Line).magnitude());
 
         return geometry;
     }
