@@ -20,6 +20,9 @@ public class App {
         System.out.println(geometry);
 
         System.out.println("Tooth Path");
-        System.out.println(geometry.getTeeth().html(Rational.of(20)));
+
+        // dpi: 96/pol = 96 pixels per 25.4mm
+        Rational scale = Rational.of(960, 254);
+        System.out.println(geometry.getTeeth().html(scale));
     }
 }
