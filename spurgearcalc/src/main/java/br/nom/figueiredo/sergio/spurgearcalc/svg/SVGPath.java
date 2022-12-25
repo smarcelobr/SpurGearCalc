@@ -23,8 +23,10 @@ public class SVGPath implements SVGPathCommand {
         return this;
     }
 
-    public SVGPath line(Point end) {
-        commandList.add( new SVGPathLineCommand(end));
+    public SVGPath line(Point ...end) {
+        for (Point e: end) {
+            commandList.add(new SVGPathLineCommand(e));
+        }
         return this;
     }
 

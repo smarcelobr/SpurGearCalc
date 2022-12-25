@@ -178,6 +178,18 @@ public class Line {
         return this.pointAtX(Rational.of(vX));
     }
 
+    public Point[] interpolation(Real startX, Real endX, int numPoints) {
+        Point[] points = new Point[numPoints];
+        // stepX = (end.X - start.X) / (numPoints+1)
+        Real step = endX.subtract(startX)
+                .divide(Rational.of(numPoints+1L)).simplify();
+        for (int idx=0; idx<numPoints; idx++) {
+            Real nX = startX.add(step.multiply(idx + 1L)).simplify();
+            points[idx] = this.pointAtX(nX);
+        }
+        return points;
+    }
+
     /**
      * Returns a point array with the interpolation between two points.
      *
@@ -186,16 +198,9 @@ public class Line {
      * @param numPoints number of between points
      * @return array of between points.
      */
-    public Point[] interpolation(Point start, Point end, int numPoints) {
-        Point[] points = new Point[numPoints];
-        // stepX = (end.X - start.X) / (numPoints+1)
-        Real step = end.getX().subtract(start.getX())
-                .divide(Rational.of(numPoints+1L)).simplify();
-        for (int idx=0; idx<numPoints; idx++) {
-            Real nX = start.getX().add(step.multiply(idx + 1L)).simplify();
-            points[idx] = this.pointAtX(nX);
-        }
-        return points;
+    public static Point[] interpolation(Point start, Point end, int numPoints) {
+        Line r = Line.of(start, end);
+        return r.interpolation(start.getX(), end.getX(), numPoints);
     }
 
     @Override

@@ -107,23 +107,41 @@ public class TeethGeometry {
     }
 
     public SVGPath svgPath(Rational scale) {
-
+        TeethGeometry scaled = scale(scale);
         SVGPath svgPath = new SVGPath();
-        svgPath.move(this.getPitchPoint().multiply(scale))
-                .line(this.getTopPt1().multiply(scale))
-                .line(this.getTopPt2().multiply(scale))
-                .line(this.getPitchPoint2().multiply(scale))
-                .line(this.getWorkPt1().multiply(scale))
-                .arc(this.dedendumFilletRadius.multiply(scale), this.dedendumFilletRadius.multiply(scale),
+        svgPath.move(scaled.getPitchPoint())
+                .line(scaled.getTopPt1())
+                .line(scaled.getTopPt2())
+                .line(scaled.getPitchPoint2())
+                .line(scaled.getWorkPt1())
+                .arc(scaled.dedendumFilletRadius, scaled.dedendumFilletRadius,
                         0, 0, 1,
-                        this.getRootClearancePt1().multiply(scale))
-                .line(this.getRootClearancePt2().multiply(scale))
-                .arc(this.dedendumFilletRadius.multiply(scale), this.dedendumFilletRadius.multiply(scale),
+                        scaled.getRootClearancePt1())
+                .line(scaled.getRootClearancePt2())
+                .arc(scaled.dedendumFilletRadius, scaled.dedendumFilletRadius,
                         0, 0, 1,
-                        this.getWorkPt2().multiply(scale))
-                .line(this.getPitchPoint3().multiply(scale));
+                        scaled.getWorkPt2())
+                .line(scaled.getPitchPoint3());
 
         return svgPath;
+    }
+    
+    public TeethGeometry scale(Rational factor) {
+        TeethGeometry scaled = new TeethGeometry();
+        scaled.setPitchPoint(           this.getPitchPoint()           .multiply(factor));
+        scaled.setPitchPoint2(          this.getPitchPoint2()          .multiply(factor));
+        scaled.setPitchPoint3(          this.getPitchPoint3()          .multiply(factor));
+        scaled.setTopPt1(               this.getTopPt1()               .multiply(factor));
+        scaled.setTopPt2(               this.getTopPt2()               .multiply(factor));
+        scaled.setWorkPt1(              this.getWorkPt1()              .multiply(factor));
+        scaled.setWorkPt2(              this.getWorkPt2()              .multiply(factor));
+        scaled.setRootClearancePt1(     this.getRootClearancePt1()     .multiply(factor));
+        scaled.setRootClearancePt2(     this.getRootClearancePt2()     .multiply(factor));
+        scaled.setDedendumFillet1Center(this.getDedendumFillet1Center().multiply(factor));
+        scaled.setDedendumFillet2Center(this.getDedendumFillet2Center().multiply(factor));
+        scaled.setDedendumFilletRadius( this.getDedendumFilletRadius() .multiply(factor));
+
+        return scaled;
     }
 
     public void setWorkPt1(Point workPt1) {

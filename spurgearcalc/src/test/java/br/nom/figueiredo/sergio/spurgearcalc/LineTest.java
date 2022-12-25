@@ -70,13 +70,12 @@ class LineTest {
     @Test
     void interpolation() {
         Line r = Line.of(Point.of(0,1),Point.of(9,7));
-        Point[] pts = r.interpolation(r.pointAtX(2), r.pointAtX(8), 3);
+        Point[] pts = Line.interpolation(r.pointAtX(2), r.pointAtX(8), 3);
         assertEquals(Point.of(Rational.of(7,2),
                 Rational.of(10,3)),pts[0]);
         assertEquals(Point.of(Rational.of(5),
                 Rational.of(13,3)),pts[1]);
         assertEquals(Point.of(Rational.of(13,2),
                 Rational.of(16,3)),pts[2]);
-
     }
 }
