@@ -1,6 +1,7 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
 import br.nom.figueiredo.sergio.math.Rational;
+import br.nom.figueiredo.sergio.math.Real;
 import br.nom.figueiredo.sergio.spurgearcalc.svg.SVGPath;
 
 import java.util.Locale;
@@ -199,4 +200,34 @@ public class TeethGeometry {
     public Point getDedendumFillet2Center() {
         return dedendumFillet2Center;
     }
+
+    public TeethGeometry involute(GearParameters gearParameters) {
+        Real pitchRadius = gearParameters.getModule().multiply(gearParameters.getNumTeeth()).divide(Rational.of(2L));
+        TeethGeometry involuted = new TeethGeometry();
+
+        involuted.setPitchPoint(           involute(this.getPitchPoint()           ,pitchRadius));
+        involuted.setPitchPoint2(          involute(this.getPitchPoint2()          ,pitchRadius));
+        involuted.setPitchPoint3(          involute(this.getPitchPoint3()          ,pitchRadius));
+        involuted.setTopPt1(               involute(this.getTopPt1()               ,pitchRadius));
+        involuted.setTopPt2(               involute(this.getTopPt2()               ,pitchRadius));
+        involuted.setWorkPt1(              involute(this.getWorkPt1()              ,pitchRadius));
+        involuted.setWorkPt2(              involute(this.getWorkPt2()              ,pitchRadius));
+        involuted.setRootClearancePt1(     involute(this.getRootClearancePt1()     ,pitchRadius));
+        involuted.setRootClearancePt2(     involute(this.getRootClearancePt2()     ,pitchRadius));
+        involuted.setDedendumFillet1Center(involute(this.getDedendumFillet1Center(),pitchRadius));
+        involuted.setDedendumFillet2Center(involute(this.getDedendumFillet2Center(),pitchRadius));
+        involuted.setDedendumFilletRadius( this.getDedendumFilletRadius() );
+
+        return involuted;
+    }
+
+    private Point involute(Point pt, Real pitchRadius) {
+        Real radiansAngle = pt.getX().divide(pitchRadius).simplify();
+        Real cosAngle = Rational.toRational( Math.cos( radiansAngle.toDouble() ) ).simplify();
+        Real sinAngle = Rational.toRational( Math.sin( radiansAngle.toDouble() ) ).simplify();
+
+        return Point.of(pt.getY().multiply(cosAngle).simplify(), pt.getY().multiply(sinAngle).simplify());
+    }
+
+
 }

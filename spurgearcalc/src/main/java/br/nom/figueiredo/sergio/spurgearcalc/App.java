@@ -14,7 +14,7 @@ public class App {
         System.out.println("Geometry Params");
         System.out.println(gearParameters);
 
-        GearGeometry geometry = GearGenerator.generate(gearParameters);
+        GearGeometry geometry = GearGenerator.generateToothProfile(gearParameters);
 
         System.out.println("Geometry results");
         System.out.println(geometry);
@@ -24,5 +24,7 @@ public class App {
         // dpi: 96/pol = 96 pixels per 25.4mm
         Rational scale = Rational.of(960, 254);
         System.out.println(geometry.getTeeth().html(scale));
+
+
     }
 }

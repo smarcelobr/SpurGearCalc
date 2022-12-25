@@ -18,7 +18,7 @@ public class GearGeometry {
     private Real dedendum;
     private Real circularPitch;
     private Real workingDepth;
-    private final TeethGeometry teeth = new TeethGeometry();
+    private TeethGeometry teeth = null;
 
     public Real getGearRadius() {
         return gearRadius;
@@ -62,6 +62,10 @@ public class GearGeometry {
 
     public TeethGeometry getTeeth() {
         return teeth;
+    }
+
+    public void setTeeth(TeethGeometry teeth) {
+        this.teeth = teeth;
     }
 
     @Override
