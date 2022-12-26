@@ -1,14 +1,8 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
-import br.nom.figueiredo.sergio.math.Rational;
 import br.nom.figueiredo.sergio.math.Real;
-import br.nom.figueiredo.sergio.spurgearcalc.svg.SVGPath;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.util.Locale;
-
-import static java.util.Objects.nonNull;
 
 /**
  * Baseado na referencia.
@@ -26,11 +20,16 @@ public class GearGeometry {
     private Real dedendum;
     private Real circularPitch;
     private Real workingDepth;
-    private final ToothGeometry[] toothArray;
+
+    private Real baseCircleRadius;
+
+    private ToothGeometry toothProfile;
+
+    private Point[][] teeth;
+    private Real cosPressureAngle;
 
     public GearGeometry(GearParameters parameters) {
         this.parameters = parameters;
-        this.toothArray = new ToothGeometry[parameters.getNumTeeth()];
     }
 
     public GearParameters getParameters() {
@@ -41,6 +40,11 @@ public class GearGeometry {
         return gearRadius;
     }
 
+    /**
+     * Raio da engrenagem.
+     *
+     * @param gearRadius raio da engrenagem
+     */
     public void setGearRadius(Real gearRadius) {
         this.gearRadius = gearRadius;
     }
@@ -61,10 +65,19 @@ public class GearGeometry {
         this.dedendum = dedendum;
     }
 
+    /**
+     * Tamanho de um dente. =module * pi
+     * @return Tamanho de um dente
+     */
     public Real getCircularPitch() {
         return circularPitch;
     }
 
+    /**
+     * seta o tamanho de um dente.
+     *
+     * @param circularPitch tamanho de um dente.
+     */
     public void setCircularPitch(Real circularPitch) {
         this.circularPitch = circularPitch;
     }
@@ -77,12 +90,28 @@ public class GearGeometry {
         this.workingDepth = workingDepth;
     }
 
-    public ToothGeometry getTooth(int toothNumber) {
-        return toothArray[toothNumber];
+    public Real getBaseCircleRadius() {
+        return baseCircleRadius;
     }
 
-    public void setTooth(int toothNumber, ToothGeometry tooth) {
-        this.toothArray[toothNumber] = tooth;
+    public void setBaseCircleRadius(Real baseCircleRadius) {
+        this.baseCircleRadius = baseCircleRadius;
+    }
+
+    public ToothGeometry getToothProfile() {
+        return toothProfile;
+    }
+
+    public void setToothProfile(ToothGeometry toothProfile) {
+        this.toothProfile = toothProfile;
+    }
+
+    public Point[][] getTeeth() {
+        return teeth;
+    }
+
+    public void setTeeth(Point[][] teeth) {
+        this.teeth = teeth;
     }
 
     @Override
@@ -96,37 +125,11 @@ public class GearGeometry {
                 .toString();
     }
 
-    public String teethAsHtml(Rational scale) {
+    public void setCosPressureAngle(Real cosPressureAngle) {
+        this.cosPressureAngle = cosPressureAngle;
+    }
 
-        SVGPath svgPath = null;
-        for (int t=0; t< parameters.getNumTeeth(); t++) {
-            svgPath = this.toothArray[t].svgPath(scale, svgPath);
-        }
-
-        String htmlTemplate = """
-<!DOCTYPE html>
-<html>
-<body>
-   <svg height="%2$f" width="%3$f" viewBox="%4$f %5$f %2$f %3$f">
-      <path id="lineBC" d="%1$s"
-            stroke="red" stroke-width="1" fill="none"/>
-      Sorry, your browser does not support inline SVG.
-   </svg>
-</body>
-</html>
-""";
-
-        if (nonNull(svgPath)) {
-            Rational margem = scale.multiply(10);
-            Rational metadeMargem = margem.divide(Rational.of(2));
-            return String.format(Locale.ENGLISH, htmlTemplate,
-                    svgPath.render(), // 1$s
-                    margem.add(svgPath.getHeight()).toDouble(), // 2$f
-                    margem.add(svgPath.getWidth()).toDouble(), // 3$f
-                    svgPath.getTopLeft().getX().subtract(metadeMargem).toDouble(), // 4$f
-                    svgPath.getTopLeft().getY().subtract(metadeMargem).toDouble()); // 5$f
-        } else {
-            throw new IllegalStateException("não esperado chegar aqui.");
-        }
+    public Real getCosPressureAngle() {
+        return cosPressureAngle;
     }
 }

@@ -24,6 +24,8 @@ public interface Real extends Comparable<Real> {
 
     Real multiply(double multiplier);
 
+    Real divide(long divisor);
+
     Real negate();
 
     double toDouble();
@@ -33,4 +35,5 @@ public interface Real extends Comparable<Real> {
     Real adjustSignal();
 
     int compareTo(Real o);
+
 }

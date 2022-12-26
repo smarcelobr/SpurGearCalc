@@ -160,6 +160,11 @@ public class Rational implements Real {
     }
 
     @Override
+    public Real divide(long divisor) {
+        return this.divide(Rational.of(divisor));
+    }
+
+    @Override
     public int hashCode() {
         Rational thisSimplified = this.simplify().adjustSignal();
         return new org.apache.commons.lang3.builder.HashCodeBuilder(17, 37)
