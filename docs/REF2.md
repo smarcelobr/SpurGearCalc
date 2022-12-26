@@ -6,48 +6,47 @@
 ## Symbols related to Gear Tooth Profile 
 
 ### Module
-- Symbols : module ![m](module.jpg)
-- Formula : p/π
+- Symbols : module $m$
+- Formula : $m = \frac{p}{\pi}$
 - Definition : Module is the unit size indicated in millimeter (mm). The value is calculated from dividing the reference pitch by Pi (π).
 
 ### Pitch
-- Symbols : pitch ![p](pitch.jpg)
-- Formula : πm
+- Symbols : pitch $p$
+- Formula : $p = \pi \cdot m$
 - Definition : Reference Pitch is the distance between corresponding points on adjacent teeth. The value is calculated from multiplying Module m by Pi(π).
 
 ### Pressure Angle 
-- Symbols : pressure angle ![alpha](pressure-angle-4.jpg)
-- Formula : (Degree)
+- Symbols : pressure angle $\alpha$
 - Definition : The angle of a gear tooth leaning against a normal reference line.
 
 ### Addendum
-- Symbols : addendum ![ha](addendum.jpg)
-- Formula : 1.00m
+- Symbols : addendum $h_{a}$
+- Formula : $h_{a} = 1.00 \cdot m$
 - Definition : The distance between reference line and tooth tip.
 
 ### Dedendum
-- Symbols : dedendum ![hf](dedendum.jpg)
-- Formula : 1.25m
+- Symbols : dedendum $h_{f}$
+- Formula : $h_{f} = 1.25 \cdot m$
 - Definition : The distance between reference line and tooth root.
 
 ### Tooth Depth
-- Symbols : tooth depth ![h](tooth-depth.jpg)
-- Formula : 2.25m
+- Symbols : tooth depth $h$
+- Formula : $h = 2.25 \cdot m$
 - Definition : The distance between tooth tip and tooth root.
 
 ### Working Depth
-- Symbols : working depth ![hw](working-depth.jpg)
-- Formula : 2.00m
+- Symbols : working depth $h_{w}$
+- Formula : $h_{w} = 2.00 \cdot m$
 - Definition : Depth of tooth meshed with the mating gear.
 
 ### Tip and Root Clearance 
-- Symbols : tip and root clearance ![c](tip-and-root-clearance.jpg)
-- Formula : 0.25m
+- Symbols : tip and root clearance $c$
+- Formula : $c = 0.25 \cdot m$
 - Definition : The distance (clearance) between tooth root and the tooth tip of mating gear.
 
 ### Dedendum Fillet Radius 
-- Symbols : Dedendum fillet radius ![pf](Dedendum-fillet-radius.jpg)
-- Formula : 0.38m
+- Symbols : Dedendum fillet radius $p_{f}$
+- Formula : $p_{f} = 0.38 \cdot m$
 - Definition : The radius of curvature between tooth surface and the tooth root.
 
 
@@ -57,7 +56,8 @@ Many gears have tooth forms made up of involute curves called involute tooth for
 basis for drawing the involute curve is the base circle (db) which size is determined by the pressure angle (αlpha)
 and the pitch circle diameter (d).
 
-    db = d cos αlpha  
+    $$db = d\cdot\cos(\alpha)$$  
+
 _base circle diameter formula_
 
 Example:
@@ -78,7 +78,7 @@ on the circle. The circle is called the base circle of the involutes.
 
 ![The Involute Curve](The-Involute-Curve.jpg)
 
-    $\alpha$ = cos-1(rb/r)
+$\alpha = \cos^{-1}(\frac{rb}{r})$
 
     inv $\alpha$ = tan($\alpha$) - $\alpha$ 
 
@@ -108,7 +108,7 @@ Exemplo:
 | 78 | 25.37123°                 | 77.9615 | 2.4494 |
 | 80 | 28.24139°                 | 79.9218 | 3.5365 | 
 
-para r=72:    
+Para r=72 o $\alpha$ é:     
 
 $$\alpha = \cos^{-1}({\frac{r_{b}}{r}})$$
 
@@ -116,6 +116,7 @@ $$\alpha = \cos^{-1}({\frac{70.47695}{72}})$$
 
 $$\alpha = 0.2060510721 \therefore \alpha\frac{180}{\pi}=11.80586^{\circ}$$
 
+Então, o $inv \alpha$ será:
 
 $$inv \alpha = tan(\alpha) - \alpha$$
 
@@ -125,6 +126,7 @@ $$inv \alpha = 0.2090175683 - 0.2060510721$$
 
 $$inv \alpha = 0.002966496168$$
 
+Por fim, teremos o $x$ :
 
 $$x = r \cdot \cos (inv \alpha)$$
 
@@ -132,12 +134,15 @@ $$x = 72 \cdot \cos (inv \alpha)$$
 
 $$x = 71.9996832$$
 
+E o $y$ :
 
 $$y = r \cdot \sin (inv \alpha)$$
 
 $$y = 72 \cdot \sin (inv \alpha)$$
 
 $$y = 0.2135874109$$
+
+
 
 ## Reference
 - https://khkgears.net/new/gear_knowledge/gear_technical_reference/involute_gear_profile.html
