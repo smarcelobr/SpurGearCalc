@@ -122,13 +122,13 @@ inv \alpha = 0.2090175683 - 0.2060510721\newline
 inv \alpha = 0.002966496168\newline
 
 \newline
-x = r \cdot \cos (inv\, \alpha)\newline
-x = 72 \cdot \cos (inv\, \alpha)\newline
+x = r \cdot \cos (inv \alpha)\newline
+x = 72 \cdot \cos (inv \alpha)\newline
 x = 71.9996832\newline
 
 \newline
-y = r \cdot \sin (inv\, \alpha)\newline
-y = 72 \cdot \sin (inv\, \alpha)\newline
+y = r \cdot \sin (inv \alpha)\newline
+y = 72 \cdot \sin (inv \alpha)\newline
 y = 0.2135874109
 ```
 
