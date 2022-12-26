@@ -127,13 +127,13 @@ Exemplo:
 
   $x = r \cdot \cos (inv\, \alpha)$
 
-  $x = 72 \cdot \cos (inv\, \alpha)$
-  $x = 71.9996832
+  $x = 72 \cdot \cos (inv\, \alpha)\newline
+   x = 71.9996832$
 
   $y = r \cdot \sin (inv\, \alpha)$
 
-  $y = 72 \cdot \sin (inv\, \alpha)$
-  $y = 0.2135874109
+  $y = 72 \cdot \sin (inv\, \alpha)\newline
+  y = 0.2135874109$
 
 
 ## Reference
