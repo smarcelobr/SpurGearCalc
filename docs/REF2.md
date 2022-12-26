@@ -80,11 +80,11 @@ on the circle. The circle is called the base circle of the involutes.
 
 $\alpha = \cos^{-1}(\frac{rb}{r})$
 
-$inv \alpha = \tan(\alpha) - \alpha$ 
+$inv\ \alpha = \tan(\alpha) - \alpha$ 
 
-$x = r \cdot \cos(inv \alpha)$
+$x = r \cdot \cos(inv\ \alpha)$
 
-$y = r \cdot \sin(inv \alpha)$
+$y = r \cdot \sin(inv\ \alpha)$
 
 Exemplo:
 
@@ -117,29 +117,29 @@ $\alpha = \cos^{-1}({\frac{70.47695}{72}})$
 
 $\alpha = 0.2060510721 \therefore \alpha\frac{180}{\pi}=11.80586^{\circ}$
 
-Então, o $inv \alpha$ será:
+Então, o $inv\ \alpha$ será:
 
-$inv \alpha = tan(\alpha) - \alpha$
+$inv\ \alpha = tan(\alpha) - \alpha$
 
-$inv \alpha = tan(0.2060510721) - 0.2060510721$
+$inv\ \alpha = tan(0.2060510721) - 0.2060510721$
 
-$inv \alpha = 0.2090175683 - 0.2060510721$
+$inv\ \alpha = 0.2090175683 - 0.2060510721$
 
-$inv \alpha = 0.002966496168$
+$inv\ \alpha = 0.002966496168$
 
 Por fim, teremos o $x$ :
 
-$x = r \cdot \cos (inv \alpha)$
+$x = r \cdot \cos (inv\ \alpha)$
 
-$x = 72 \cdot \cos (inv \alpha)$
+$x = 72 \cdot \cos (inv\ \alpha)$
 
 $x = 71.9996832$
 
 E o $y$ :
 
-$y = r \cdot \sin (inv \alpha)$
+$y = r \cdot \sin (inv\ \alpha)$
 
-$y = 72 \cdot \sin (inv \alpha)$
+$y = 72 \cdot \sin (inv\ \alpha)$
 
 $y = 0.2135874109$
 
