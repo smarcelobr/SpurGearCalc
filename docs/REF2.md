@@ -110,31 +110,25 @@ Exemplo:
 
     
     para r=72:
+```math    
+  \alpha = \cos^{-1}({\frac{r_{b}}{r}})
+  \alpha = \cos^{-1}({\frac{70.47695}{72}})
+  \alpha = 0.2060510721 \therefore \alpha\frac{180}{\pi}=11.80586^{\circ}
     
-  $\alpha = \cos^{-1}({\frac{r_{b}}{r}})$
+  inv \alpha = tan(\alpha) - \alpha
+  inv \alpha = tan(0.2060510721) - 0.2060510721
+  inv \alpha = 0.2090175683 - 0.2060510721
+  inv \alpha = 0.002966496168
 
-  $\alpha = \cos^{-1}({\frac{70.47695}{72}})$
+  x = r \cdot \cos (inv\, \alpha)
 
-  $\alpha = 0.2060510721 \therefore \alpha\frac{180}{\pi}=11.80586^{\circ}$
-    
-  $inv\, \alpha = tan(\alpha) - \alpha$
+  x = 72 \cdot \cos (inv\, \alpha)
+  x = 71.9996832
 
-  $inv\, \alpha = tan(0.2060510721) - 0.2060510721$
-
-  $inv\, \alpha = 0.2090175683 - 0.2060510721$
-
-  $inv\, \alpha = 0.002966496168$
-
-  $x = r \cdot \cos (inv\, \alpha)$
-
-  $x = 72 \cdot \cos (inv\, \alpha)\newline
-   x = 71.9996832$
-
-  $y = r \cdot \sin (inv\, \alpha)$
-
-  $y = 72 \cdot \sin (inv\, \alpha)\newline
-  y = 0.2135874109$
-
+  y = r \cdot \sin (inv\, \alpha)
+  y = 72 \cdot \sin (inv\, \alpha)
+  y = 0.2135874109
+```
 
 ## Reference
 - https://khkgears.net/new/gear_knowledge/gear_technical_reference/involute_gear_profile.html
