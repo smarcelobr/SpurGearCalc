@@ -69,8 +69,7 @@ Example:
 
     Gear Computed Diameters:
     Reference Diameter (d): 150 = n * m
-    Base Diameter     (db): 140.95389 = d * cos(alpha)
-    Tip Diameter      (dt): 160 = d + (addendum * 2) 
+    Base Diameter     (db): 140.95389 = d * cos(alpha) 
 
 ## The Involute Curve
 
@@ -79,16 +78,60 @@ on the circle. The circle is called the base circle of the involutes.
 
 ![The Involute Curve](The-Involute-Curve.jpg)
 
+    $\alpha$ = cos-1(rb/r)
 
-$\alpha$ = cos-1(rb/r)
+    inv $\alpha$ = tan($\alpha$) - $\alpha$ 
 
-inv $\alpha$ = tan $\alpha$ - $\alpha$ 
+    x = r * cos(inv $\alpha$)
+    y = r * sin(inv $\alpha$)
 
-x = r * cos(inv $\alpha$)
-y = r * cos(inv $\alpha$)
+Exemplo:
+
+    Gear Parameters:
+    - Module: 5 (m)
+    - Pressure Angle: 20° degrees or pi/9 radians ($\alpha$)
+    - Number of teeth: 30 (n)
+
+    Gear Computed Diameters:
+    Reference Diameter (d): 150 = n * m 
+    Reference Radius      :  75 = d / 2
+    Base Diameter     (db): 140.95389 = d * cos(alpha) 
+    Base Radius       (rb):  70.47695 = db / 2 
+    Tip Diameter      (dt): 160 = d + (addendum * 2)  
+    
+| r (radius) | $\alpha$ (Pressure Angle) | x   | y   |
+|------------|---------------------------| --- |-----|
+| 70.47695   | 0.00000                   | 70.4769 | 0.000 |
+| 72 | 11.80586°                 | 71.9997 | 0.2136 |
+| 74 | 17.75087°                 | 73.9961 | 0.7628 |
+| 76 | 21.97791°                 | 75.9848 | 1.5192 |
+| 78 | 25.37123°                 | 77.9615 | 2.4494 |
+| 80 | 28.24139°                 | 79.9218 | 3.5365 | 
+
+    
+    para r=72:
+    
+    $\alpha = \cos^{-1}({\frac{r_{b}}{r}})$
+    $\alpha = \cos^{-1}({\frac{70.47695}{72}})$
+    $\alpha = 0.2060510721 \therefore \alpha\frac{180}{\pi}=11.80586^{\circ}$
+    
+    $inv\, \alpha = tan(\alpha) - \alpha$
+    $inv\, \alpha = tan(0.2060510721) - 0.2060510721$
+    $inv\, \alpha = 0.2090175683 - 0.2060510721$
+    $inv\, \alpha = 0.002966496168$
+
+    $x = r \cdot \cos (inv\, \alpha)$
+    $x = 72 \cdot \cos (inv\, \alpha)$
+    $x = 71.9996832
+
+    $y = r \cdot \sin (inv\, \alpha)$
+    $y = 72 \cdot \sin (inv\, \alpha)$
+    $y = 0.2135874109
 
 
 ## Reference
 - https://khkgears.net/new/gear_knowledge/gear_technical_reference/involute_gear_profile.html
 - https://khkgears.net/new/gear_knowledge/gear-nomenclature/base-circle.html
 - Vídeo [Involute Gears Explained](https://www.youtube.com/watch?v=nrsCoQN6V4M)
+
+- [LaTeX tester online](https://latex.codecogs.com/eqneditor/editor.php)
