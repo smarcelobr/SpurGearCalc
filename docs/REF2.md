@@ -52,3 +52,4 @@
 
 ## Reference
 - https://khkgears.net/new/gear_knowledge/gear_technical_reference/involute_gear_profile.html
+- Vídeo [Involute Gears Explained](https://www.youtube.com/watch?v=nrsCoQN6V4M)
