@@ -1,8 +1,14 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.math.Rational;
 import br.nom.figueiredo.sergio.math.Real;
+import br.nom.figueiredo.sergio.spurgearcalc.svg.SVGPath;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.Locale;
+
+import static java.util.Objects.nonNull;
 
 /**
  * Baseado na referencia.
@@ -13,12 +19,23 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class GearGeometry {
 
+    private final GearParameters parameters;
+
     private Real gearRadius;
     private Real addendum;
     private Real dedendum;
     private Real circularPitch;
     private Real workingDepth;
-    private TeethGeometry teeth = null;
+    private final ToothGeometry[] toothArray;
+
+    public GearGeometry(GearParameters parameters) {
+        this.parameters = parameters;
+        this.toothArray = new ToothGeometry[parameters.getNumTeeth()];
+    }
+
+    public GearParameters getParameters() {
+        return parameters;
+    }
 
     public Real getGearRadius() {
         return gearRadius;
@@ -60,12 +77,12 @@ public class GearGeometry {
         this.workingDepth = workingDepth;
     }
 
-    public TeethGeometry getTeeth() {
-        return teeth;
+    public ToothGeometry getTooth(int toothNumber) {
+        return toothArray[toothNumber];
     }
 
-    public void setTeeth(TeethGeometry teeth) {
-        this.teeth = teeth;
+    public void setTooth(int toothNumber, ToothGeometry tooth) {
+        this.toothArray[toothNumber] = tooth;
     }
 
     @Override
@@ -77,5 +94,39 @@ public class GearGeometry {
                 .append("circularPitch", circularPitch)
                 .append("workingDepth", workingDepth)
                 .toString();
+    }
+
+    public String teethAsHtml(Rational scale) {
+
+        SVGPath svgPath = null;
+        for (int t=0; t< parameters.getNumTeeth(); t++) {
+            svgPath = this.toothArray[t].svgPath(scale, svgPath);
+        }
+
+        String htmlTemplate = """
+<!DOCTYPE html>
+<html>
+<body>
+   <svg height="%2$f" width="%3$f" viewBox="%4$f %5$f %2$f %3$f">
+      <path id="lineBC" d="%1$s"
+            stroke="red" stroke-width="1" fill="none"/>
+      Sorry, your browser does not support inline SVG.
+   </svg>
+</body>
+</html>
+""";
+
+        if (nonNull(svgPath)) {
+            Rational margem = scale.multiply(10);
+            Rational metadeMargem = margem.divide(Rational.of(2));
+            return String.format(Locale.ENGLISH, htmlTemplate,
+                    svgPath.render(), // 1$s
+                    margem.add(svgPath.getHeight()).toDouble(), // 2$f
+                    margem.add(svgPath.getWidth()).toDouble(), // 3$f
+                    svgPath.getTopLeft().getX().subtract(metadeMargem).toDouble(), // 4$f
+                    svgPath.getTopLeft().getY().subtract(metadeMargem).toDouble()); // 5$f
+        } else {
+            throw new IllegalStateException("não esperado chegar aqui.");
+        }
     }
 }

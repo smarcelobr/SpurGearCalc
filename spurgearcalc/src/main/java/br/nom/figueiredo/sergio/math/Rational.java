@@ -40,17 +40,25 @@ public class Rational implements Real {
         return denominador;
     }
 
+    public static Real[] commonDenominator(Real real1, Real real2) {
+
+        Real real1Simplified = real1.simplify().adjustSignal();
+        Real real2Simplified = real2.simplify().adjustSignal();
+        BigInteger lcm = Rational.lcm(real1Simplified.getDenominador(),
+                real2Simplified.getDenominador());
+
+        Real[] reals = new Real[2];
+        reals[0] = new Rational( real1Simplified.getNumerador().multiply(lcm)
+                .divide(real1Simplified.getDenominador()), lcm);
+        reals[1] = new Rational( real2Simplified.getNumerador().multiply(lcm)
+                .divide(real2Simplified.getDenominador()), lcm);
+        return reals;
+    }
+
     @Override
     public Real add(Real other) {
-        Rational thisSimplified = this.simplify().adjustSignal();
-        Real otherSimplified = other.simplify().adjustSignal();
-        BigInteger lcm = Rational.lcm(thisSimplified.denominador,
-                otherSimplified.getDenominador());
-
-        return new Rational(thisSimplified.numerador.multiply(lcm).divide(thisSimplified.denominador)
-                     .add(
-                otherSimplified.getNumerador().multiply(lcm).divide(otherSimplified.getDenominador()))
-                , lcm);
+        Real[] reals = commonDenominator(this, other);
+        return new Rational(reals[0].getNumerador().add(reals[1].getNumerador()), reals[0].getDenominador());
     }
 
     @Override
@@ -143,6 +151,12 @@ public class Rational implements Real {
         // inverte os sinais de modo que tudo fique positivo ou que o negativo fique no numerador:
         BigInteger menos1 = BigInteger.valueOf(-1L);
         return new Rational(this.numerador.multiply(menos1), this.denominador.multiply(menos1));
+    }
+
+    @Override
+    public int compareTo(Real o) {
+        Real[] reals = commonDenominator(this, o);
+        return reals[0].getNumerador().compareTo(reals[1].getNumerador());
     }
 
     @Override

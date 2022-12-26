@@ -6,7 +6,7 @@ import java.math.BigInteger;
 /**
  * Números que pertence ao conjunto dos Reais.
  */
-public interface Real {
+public interface Real extends Comparable<Real> {
     BigInteger getNumerador();
     BigInteger getDenominador();
 
@@ -31,4 +31,6 @@ public interface Real {
     BigDecimal toBigDecimal();
 
     Real adjustSignal();
+
+    int compareTo(Real o);
 }

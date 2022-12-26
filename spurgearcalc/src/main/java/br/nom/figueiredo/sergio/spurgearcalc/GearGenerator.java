@@ -14,7 +14,7 @@ public class GearGenerator {
     }
 
     public static GearGeometry generateToothProfile(GearParameters gearParameters) {
-        GearGeometry geometry = new GearGeometry();
+        GearGeometry geometry = new GearGeometry(gearParameters);
 
         // tamanho do raio de ação da engrenagem
         Rational module = gearParameters.getModule();
@@ -26,7 +26,8 @@ public class GearGenerator {
                 .divide(Rational.of(2)).simplify());
 
         // tamanho de um dente completo.
-        geometry.setCircularPitch(module.multiply(Rational.PI));
+        Real circularPitch = module.multiply(Rational.PI);
+        geometry.setCircularPitch(geometry.getCircularPitch());
 
         Real addendum = module.multiply(ADDENDUM_MODULE).simplify();
         geometry.setAddendum(addendum);
@@ -35,14 +36,14 @@ public class GearGenerator {
 
         geometry.setWorkingDepth(module.multiply(WORKING_DEPTH_MODULE).simplify());
 
-        TeethGeometry rackToothProfile = new TeethGeometry();
+        ToothGeometry rackToothProfile = new ToothGeometry();
         Rational tanPressureAngle = Rational.toRational(Math.tan(gearParameters.getPressureAngle().toDouble()));
 
-        Vector vCircularPitch = new Vector(geometry.getCircularPitch(),Rational.ZERO);
+        Vector vCircularPitch = new Vector(circularPitch,Rational.ZERO);
 
         rackToothProfile.setPitchPoint( Point.of(Rational.ZERO, geometry.getGearRadius()) );
-        rackToothProfile.setPitchPoint2( Point.of(geometry.getCircularPitch().divide(Rational.of(2)), geometry.getGearRadius()) );
-        rackToothProfile.setPitchPoint3( Point.of(geometry.getCircularPitch(), geometry.getGearRadius()) );
+        rackToothProfile.setPitchPoint2( Point.of(circularPitch.divide(Rational.of(2)), geometry.getGearRadius()) );
+        rackToothProfile.setPitchPoint3( Point.of(circularPitch, geometry.getGearRadius()) );
 
         rackToothProfile.setTopPt1( rackToothProfile.getPitchPoint().add(Point.of( tanPressureAngle.multiply(addendum), addendum)) );
         rackToothProfile.setTopPt2( rackToothProfile.getPitchPoint2().add(Point.of( tanPressureAngle.multiply(addendum).negate(), addendum)) );
@@ -72,13 +73,16 @@ public class GearGenerator {
         rackToothProfile.setRootClearancePt1(dedendumFillet1Center.nearestPointAt(rootLine));
         rackToothProfile.setRootClearancePt2(dedendumFillet2Center.nearestPointAt(rootLine));
 
+        rackToothProfile.interpolation();
+
         System.out.printf("fillet radius: %s\n", filletRadius.toDouble());
         System.out.printf("distancia da raiz do dente: %s\n", rackToothProfile.getDedendumFillet1Center().vectorTo(rootLine).magnitude());
         System.out.printf("distancia da superfície do dente: %s\n", rackToothProfile.getDedendumFillet1Center().vectorTo(face2Line).magnitude());
 
-
-        TeethGeometry gearToothProfile = rackToothProfile.involute(gearParameters);
-        geometry.setTeeth(gearToothProfile);
+        for (int t=0; t< gearParameters.getNumTeeth(); t++) {
+            ToothGeometry gearToothProfile = rackToothProfile.involute(gearParameters, t);
+            geometry.setTooth(t, gearToothProfile);
+        }
 
         return geometry;
     }
