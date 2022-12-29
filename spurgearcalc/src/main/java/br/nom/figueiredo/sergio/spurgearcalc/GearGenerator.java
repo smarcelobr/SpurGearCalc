@@ -55,7 +55,7 @@ public class GearGenerator {
         Vector vCircularPitch = new Vector(circularPitch,Rational.ZERO);
 
         rackToothProfile.setPitchPoint( Point.of(Rational.ZERO, geometry.getGearRadius()) );
-        rackToothProfile.setPitchPoint2( Point.of(circularPitch.divide(Rational.of(2)), geometry.getGearRadius()) );
+        rackToothProfile.setPitchPoint2( Point.of(circularPitch.divide(Rational.of(2,1)), geometry.getGearRadius()) );
         rackToothProfile.setPitchPoint3( Point.of(circularPitch, geometry.getGearRadius()) );
 
         rackToothProfile.setTopPt1( rackToothProfile.getPitchPoint().add(Point.of( tanPressureAngle.multiply(addendum), addendum)) );

@@ -29,6 +29,7 @@ public class App {
 
         // dpi: 96/pol = 96 pixels per 25.4mm
         Rational scale = Rational.of(960, 254);
+        scale = Rational.of(10);
         System.out.println(gearAsHtml(gear1, gear2, scale));
 
 
@@ -38,26 +39,27 @@ public class App {
 
         Point[] pts = gear1.getToothProfile().getPoints();
         SVGPath pathToothProfile = new SVGPath();
-        pathToothProfile.move(pts[0]);
+        pathToothProfile.move(pts[0].multiply(scale));
         for (int i=1;i<pts.length;i++) {
-            pathToothProfile.line(pts[i]);
+            pathToothProfile.line(pts[i].multiply(scale));
         }
 
         SVGPath pathGear1 = svgPathGear(gear1, scale);
-
         SVGPath pathGear2 = svgPathGear(gear2, scale);
 
         String htmlTemplate = """
                 <!DOCTYPE html>
-                <html>
+                <html lang="pt-BR">
                 <body>
-                   <svg height="700" width="700" viewBox="%5$f %6$f %3$f %4$f">
+                   <svg height="%3$f" width="%4$f" viewBox="%5$f %6$f %3$f %4$f">
 <path id="gear1" d="%1$s"
-      stroke="red" stroke-width="1" fill="none" />
+      stroke="none" stroke-width="1" fill="red" />
 <path id="gear2" d="%2$s"
-      stroke="green" stroke-width="1" fill="none" transform="translate(0 9.6)" />
+      stroke="none" stroke-width="1" fill="green" transform="translate(%10$f 0)" />
+<circle r="%8$f" stroke="blue" stroke-width="1" fill="none" stroke-opacity="0.5"/>
+<circle r="%9$f" stroke="olive" stroke-width="1" fill="none" stroke-opacity="0.5"/>
 <path id="gearProfile" d="%7$s"
-      stroke="blue" stroke-width="1" fill="none" transform="translate(0 10)"/>                      
+      stroke="blue" stroke-width="1" fill="none" transform="translate(0 10)"/>
                       Sorry, your browser does not support inline SVG.
                    </svg>
                 </body>
@@ -65,7 +67,8 @@ public class App {
                 """;
 
             Rational margem = scale.multiply(10);
-            Rational metadeMargem = margem.divide(Rational.of(2));
+        Rational dois = Rational.of(2);
+        Rational metadeMargem = margem.divide(dois);
             return String.format(Locale.ENGLISH, htmlTemplate,
                     pathGear1.render(), // 1$s
                     pathGear2.render(), // 2$s
@@ -73,7 +76,10 @@ public class App {
                     margem.add(pathGear1.getWidth().add(pathToothProfile.getWidth())).toDouble(), // 4$f
                     pathGear1.getTopLeft().getX().subtract(metadeMargem).toDouble(), // 5$f
                     pathGear1.getTopLeft().getY().subtract(metadeMargem).toDouble(), // 6$f
-                    pathToothProfile.render()); // 7$f
+                    pathToothProfile.render(), // 7$f
+                    gear1.getGearRadius().multiply(scale).toDouble(),// 8$f
+                    gear1.getBaseCircleRadius().multiply(scale).toDouble(),// 9$f
+                    gear2.getGearRadius().multiply(scale).multiply(dois).toDouble());// 10$f
     }
 
     private static SVGPath svgPathGear(GearGeometry gear, Rational scale) {
@@ -91,15 +97,16 @@ public class App {
     }
 
     private static SVGPath svgPath(Point[] tooth, Rational scale, SVGPath svgPath) {
+        Point firstPoint = tooth[0].multiply(scale);
         if (isNull(svgPath)) {
             svgPath = new SVGPath();
-            svgPath.move(tooth[0]);
+            svgPath.move(firstPoint);
         } else {
-            svgPath.line(tooth[0]);
+            svgPath.line(firstPoint);
         }
 
         for (int i=1; i<tooth.length; i++) {
-            svgPath.line(tooth[i]);
+            svgPath.line(tooth[i].multiply(scale));
         }
 
         return svgPath;
