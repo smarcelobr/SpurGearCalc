@@ -1,6 +1,7 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
 import br.nom.figueiredo.sergio.math.Rational;
+import br.nom.figueiredo.sergio.math.Real;
 import br.nom.figueiredo.sergio.spurgearcalc.svg.SVGPath;
 
 import java.util.Locale;
@@ -20,7 +21,7 @@ public class App {
         System.out.println(gearParameters);
 
         GearGeometry gear1 = GearGenerator.generate(gearParameters);
-        GearGeometry gear2 = GearGenerator.generate(new GearParameters(12, module));
+        GearGeometry gear2 = GearGenerator.generate(new GearParameters(48, module));
 
         System.out.println("Geometry results");
         System.out.println(gear1);
@@ -29,7 +30,7 @@ public class App {
 
         // dpi: 96/pol = 96 pixels per 25.4mm
         Rational scale = Rational.of(960, 254);
-        scale = Rational.of(10);
+        scale = Rational.of(20);
         System.out.println(gearAsHtml(gear1, gear2, scale));
 
 
@@ -52,24 +53,70 @@ public class App {
                 <html lang="pt-BR">
                 <body>
                    <svg height="%3$f" width="%4$f" viewBox="%5$f %6$f %3$f %4$f">
+<defs>                   
+<path id="gearProfile" d="%7$s"
+      stroke="blue" stroke-width="1" fill="none"/>
 <path id="gear1" d="%1$s"
       stroke="none" stroke-width="1" fill="red" />
 <path id="gear2" d="%2$s"
-      stroke="none" stroke-width="1" fill="green" transform="translate(%10$f 0)" />
-<circle r="%8$f" stroke="blue" stroke-width="1" fill="none" stroke-opacity="0.5"/>
-<circle r="%9$f" stroke="olive" stroke-width="1" fill="none" stroke-opacity="0.5"/>
-<path id="gearProfile" d="%7$s"
-      stroke="blue" stroke-width="1" fill="none" transform="translate(0 10)"/>
+      stroke="none" stroke-width="1" fill="green"  />
+</defs>             
+<use xlink:href="#gear1" x="0" y="0" fill-opacity="0.8">
+<animateTransform
+      attributeName="transform"
+      attributeType="XML"
+      type="rotate"
+      from="0 0 0"
+      to="%21$f 0 0"
+      dur="10s"
+      repeatCount="indefinite" />
+</use>    
+<use xlink:href="#gear2" x="%12$f" y="0" fill-opacity="0.8">
+<animateTransform
+      attributeName="transform"
+      attributeType="XML"
+      type="rotate"
+      from="0 %12$f 0"
+      to="-%20$f %12$f 0"
+      dur="10s"
+      repeatCount="indefinite" />
+</use>    
+
+<circle id="gear1_d" r="%8$f" stroke="blue" stroke-width="1" stroke-dasharray='10 10' fill="none" stroke-opacity="0.5"/>
+<circle id="gear1_db" r="%9$f" stroke="olive" stroke-width="1" stroke-dasharray='10 10' fill="none" stroke-opacity="0.5"/>
+<circle id="gear2_d" r="%10$f" stroke="blue" stroke-width="1" stroke-dasharray='10 10' fill="none" stroke-opacity="0.5"
+    transform="translate(%12$f 0)" />
+<circle id="gear2_db" r="%11$f" stroke="red" stroke-width="1" stroke-dasharray='10 10' fill="none" stroke-opacity="0.5"
+    transform="translate(%12$f 0)" />
+
+<g>  
+    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %22$f) rotate(90 0 0)" />    
+    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %16$f) rotate(90 0 0)" />    
+    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %15$f) rotate(90 0 0)" />    
+    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %14$f) rotate(90 0 0)" />    
+    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %17$f) rotate(90 0 0)" />    
+    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %18$f) rotate(90 0 0)" />
+    <animateTransform
+      attributeName="transform"
+      attributeType="XML"
+      type="translate"
+      from="0 0"
+      to="0 %19$f"
+      dur="10s"
+      repeatCount="indefinite" />    
+</g>    
                       Sorry, your browser does not support inline SVG.
                    </svg>
                 </body>
                 </html>
                 """;
 
+        double anguloAnim = 30.0D; // 30 graus
             Rational margem = scale.multiply(10);
         Rational dois = Rational.of(2);
         Rational metadeMargem = margem.divide(dois);
-            return String.format(Locale.ENGLISH, htmlTemplate,
+        Real arcTooth = gear1.getCircularPitch().multiply(scale);
+        return String.format(Locale.ENGLISH, htmlTemplate,
                     pathGear1.render(), // 1$s
                     pathGear2.render(), // 2$s
                     margem.add(pathGear1.getHeight().add(pathToothProfile.getHeight())).toDouble(), // 3$f
@@ -79,7 +126,22 @@ public class App {
                     pathToothProfile.render(), // 7$f
                     gear1.getGearRadius().multiply(scale).toDouble(),// 8$f
                     gear1.getBaseCircleRadius().multiply(scale).toDouble(),// 9$f
-                    gear2.getGearRadius().multiply(scale).multiply(dois).toDouble());// 10$f
+                    gear2.getGearRadius().multiply(scale).toDouble(),// 10$f
+                    gear2.getBaseCircleRadius().multiply(scale).toDouble(),// 11$f
+                    gear1.getGearRadius().add(gear2.getGearRadius()).multiply(scale).toDouble(),// 12$f distancia entre eixos
+                    gear1.getGearRadius().multiply(dois).multiply(scale).toDouble(), // 13$f - translate x profile tooth
+                    arcTooth.divide(dois).toDouble(), // 14$f - translate y profile tooth
+                    arcTooth.divide(dois).subtract(arcTooth).toDouble(), // 15$f - translate y profile tooth
+                    arcTooth.divide(dois).subtract(arcTooth.multiply(dois)).toDouble(), // 16$f - translate y profile tooth
+                    arcTooth.divide(dois).add(arcTooth).toDouble(), // 17$f - translate y profile tooth
+                    arcTooth.divide(dois).add(arcTooth.multiply(dois)).toDouble(), // 18$f - translate y profile tooth
+                    Rational.toRational(anguloAnim).divide(180).multiply(gear1.getGearRadius().multiply(scale)).multiply(Rational.PI).toDouble(),// 19$f - animationTranslateProfileTooth -  ang_degree/180*pi*raio
+                    Rational.toRational(gear1.getParameters().getNumTeeth()*anguloAnim).divide(gear2.getParameters().getNumTeeth()).toDouble(), // 20$f - ratio gear1/gear2
+                    anguloAnim, // 21$f - angulo animacao
+                    arcTooth.divide(dois).subtract(arcTooth.multiply(3)).toDouble() // 22$f - translate y profile tooth
+
+            );
+
     }
 
     private static SVGPath svgPathGear(GearGeometry gear, Rational scale) {
