@@ -66,17 +66,17 @@ public class GearGeometry {
     }
 
     /**
-     * Tamanho de um dente. =module * pi
-     * @return Tamanho de um dente
+     * Tamanho (arco) de um dente. =module * pi
+     * @return Tamanho (arco) de um dente
      */
     public Real getCircularPitch() {
         return circularPitch;
     }
 
     /**
-     * seta o tamanho de um dente.
+     * seta o tamanho (arco) de um dente.
      *
-     * @param circularPitch tamanho de um dente.
+     * @param circularPitch tamanho (arco) de um dente.
      */
     public void setCircularPitch(Real circularPitch) {
         this.circularPitch = circularPitch;

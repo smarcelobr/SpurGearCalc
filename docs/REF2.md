@@ -80,6 +80,10 @@ on the circle. The circle is called the base circle of the involutes.
 
 $\alpha = \cos^{-1}(\frac{rb}{r})$
 
+$\theta = \tan{(\alpha)}$
+
+$inv\ \alpha = \theta - \alpha$
+
 $inv\ \alpha = \tan(\alpha) - \alpha$ 
 
 $x = r \cdot \cos(inv\ \alpha)$

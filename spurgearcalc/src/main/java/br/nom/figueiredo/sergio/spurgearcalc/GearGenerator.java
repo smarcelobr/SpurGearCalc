@@ -180,24 +180,32 @@ public class GearGenerator {
 
         Real baseCircleRadius = geometry.getBaseCircleRadius();
 
-        if (baseCircleRadius.compareTo(pt.getY()) <= 0 && false) { // a base circle limita o ponto de rotação dos dentes
-
+        if (baseCircleRadius.compareTo(pt.getY()) <= 0) { // a base circle limita o ponto de rotação dos dentes
             // alpha = arccos( rb / r )
-            double alpha = Math.acos(baseCircleRadius.divide(pt.getY()).toDouble()) + arcOffset.toDouble();
+            double alpha = Math.acos(baseCircleRadius.divide(pt.getY()).toDouble());
+
+            if (pt.getX().compareTo(geometry.getToothProfile().getTopPt2().getX())>=0 &&
+                    pt.getX().compareTo(geometry.getToothProfile().getRootClearancePt1().getX())<=0) {
+                alpha = -alpha;
+            }
 
             // inv alpha = tan (alpha) - alpha
             double invAlpha = Math.tan(alpha) - alpha;
 
-            radiansAngle = invAlpha ;
+            radiansAngle = invAlpha + arcOffset.divide(geometry.getGearRadius()).toDouble();
 
+            Real cosAngle = Rational.toRational(Math.cos(radiansAngle)).simplify();
+            Real sinAngle = Rational.toRational(Math.sin(radiansAngle)).simplify();
+
+            return Point.of(pt.getY().multiply(cosAngle).simplify(), pt.getY().multiply(sinAngle).simplify());
         } else {
 //            radiansAngle = arcOffset.divide(baseCircleRadius).toDouble();
             radiansAngle = arcOffset.divide(geometry.getGearRadius()).toDouble();
-        }
-        Real cosAngle = Rational.toRational(Math.cos(radiansAngle)).simplify();
-        Real sinAngle = Rational.toRational(Math.sin(radiansAngle)).simplify();
+            Real cosAngle = Rational.toRational(Math.cos(radiansAngle)).simplify();
+            Real sinAngle = Rational.toRational(Math.sin(radiansAngle)).simplify();
 
-        return Point.of(pt.getY().multiply(cosAngle).simplify(), pt.getY().multiply(sinAngle).simplify());
+            return Point.of(pt.getY().multiply(cosAngle).simplify(), pt.getY().multiply(sinAngle).simplify());
+        }
     }
 
 }
