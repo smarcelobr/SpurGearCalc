@@ -1,7 +1,10 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
-import br.nom.figueiredo.sergio.math.Rational;
-import br.nom.figueiredo.sergio.math.Real;
+import br.nom.figueiredo.sergio.math.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 public class GearGenerator {
 
@@ -101,6 +104,8 @@ public class GearGenerator {
             teeth[t] = involute(geometry, t);
         }
 
+        calculateFace(geometry);
+
         return geometry;
     }
 
@@ -165,8 +170,12 @@ public class GearGenerator {
     private static Point involute(Point pt, GearGeometry geometry, int toothNumber) {
 //        return Point.of(pt.getX().add(pitchArcPos).simplify(), pt.getY().simplify());
 
+        Real baseCircleRadius = geometry.getBaseCircleRadius();
+
         Real pitchArcPos = geometry.getCircularPitch().multiply(toothNumber);
-        final Real arcOffset = pitchArcPos.add(pt.getX());
+        //final Real arcOffset = pitchArcPos.add(pt.getX());
+        //final Real arcOffset = pitchArcPos.multiply(pt.getX().divide(geometry.getGearRadius()));
+        final Real arcOffset = pitchArcPos.add(pt.getX()).multiply(pt.getY().divide(geometry.getGearRadius()));
 
 //        Real pitchArcPos = geometry.getBaseCircleRadius()
 //                .multiply(2L) // Diametro do BaseCircle
@@ -178,7 +187,6 @@ public class GearGenerator {
 
         final double radiansAngle;
 
-        Real baseCircleRadius = geometry.getBaseCircleRadius();
 
         if (baseCircleRadius.compareTo(pt.getY()) <= 0) { // a base circle limita o ponto de rotação dos dentes
             // alpha = arccos( rb / r )
@@ -206,6 +214,46 @@ public class GearGenerator {
 
             return Point.of(pt.getY().multiply(cosAngle).simplify(), pt.getY().multiply(sinAngle).simplify());
         }
+    }
+
+    private static void calculateFace(GearGeometry geometry) {
+        List<Vector> faceVectors = new ArrayList<>(11);
+
+        Real baseCircleRadius = geometry.getBaseCircleRadius();
+        Real refRadius = geometry.getGearRadius();
+        Real addendumRadius = refRadius.add(geometry.getAddendum());
+
+        faceVectors.addAll(linearInterpolation(baseCircleRadius, refRadius, 5,
+                new ArrayList<>(5),
+                r->calcInvolute(r, baseCircleRadius)));
+        faceVectors.addAll(linearInterpolation(refRadius, addendumRadius, 5,
+                new ArrayList<>(5),
+                r->calcInvolute(r, baseCircleRadius)));
+        faceVectors.add(calcInvolute(addendumRadius, baseCircleRadius));
+
+        // normaliza no PitchPoint
+        Vector pitchPoint = faceVectors.get(5);
+
+        geometry.setFace(faceVectors.stream().map(v->v.subtract(pitchPoint)).toList());
+    }
+
+    private static Vector calcInvolute(Real radius, Real baseCircleRadius) {
+        double alpha = Math.acos(baseCircleRadius.divide(radius).toDouble());
+        double invAlpha = Math.tan(alpha) - alpha;
+        Real cosInvAlpha = Rational.toRational(Math.cos(invAlpha));
+        Real sinInvAlpha = Rational.toRational(Math.sin(invAlpha));
+        return new Vector(radius.multiply(cosInvAlpha), radius.multiply(sinInvAlpha));
+    }
+
+    private static <R> List<R> linearInterpolation(Real start, Real end,
+                                                   Integer qtd,
+                                                   List<R> lista,
+                                                   Function<Real, R> d) {
+        Real step = end.subtract(start).divide(qtd).simplify();
+        for (Real n=start; n.compareTo(end)<0; n=n.add(step).simplify()) {
+            lista.add(d.apply(n));
+        }
+        return lista;
     }
 
 }

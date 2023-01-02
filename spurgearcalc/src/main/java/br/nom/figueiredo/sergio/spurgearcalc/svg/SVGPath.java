@@ -1,8 +1,8 @@
 package br.nom.figueiredo.sergio.spurgearcalc.svg;
 
+import br.nom.figueiredo.sergio.math.Point;
 import br.nom.figueiredo.sergio.math.Rational;
 import br.nom.figueiredo.sergio.math.Real;
-import br.nom.figueiredo.sergio.spurgearcalc.Point;
 
 import java.util.ArrayList;
 import java.util.List;

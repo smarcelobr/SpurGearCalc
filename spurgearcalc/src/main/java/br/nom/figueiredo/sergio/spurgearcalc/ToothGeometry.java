@@ -1,5 +1,6 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.math.Point;
 import br.nom.figueiredo.sergio.math.Rational;
 
 public class ToothGeometry {

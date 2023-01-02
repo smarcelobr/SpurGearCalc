@@ -1,8 +1,12 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.math.Point;
 import br.nom.figueiredo.sergio.math.Real;
+import br.nom.figueiredo.sergio.math.Vector;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.List;
 
 /**
  * Baseado na referencia.
@@ -27,6 +31,7 @@ public class GearGeometry {
 
     private Point[][] teeth;
     private Real cosPressureAngle;
+    private List<Vector> face;
 
     public GearGeometry(GearParameters parameters) {
         this.parameters = parameters;
@@ -131,5 +136,13 @@ public class GearGeometry {
 
     public Real getCosPressureAngle() {
         return cosPressureAngle;
+    }
+
+    public void setFace(List<Vector> face) {
+        this.face = face;
+    }
+
+    public List<Vector> getFace() {
+        return face;
     }
 }

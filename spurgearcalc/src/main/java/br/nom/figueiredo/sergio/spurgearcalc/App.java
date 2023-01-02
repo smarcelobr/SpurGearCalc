@@ -1,9 +1,12 @@
 package br.nom.figueiredo.sergio.spurgearcalc;
 
+import br.nom.figueiredo.sergio.math.Point;
 import br.nom.figueiredo.sergio.math.Rational;
 import br.nom.figueiredo.sergio.math.Real;
+import br.nom.figueiredo.sergio.math.Vector;
 import br.nom.figueiredo.sergio.spurgearcalc.svg.SVGPath;
 
+import java.util.List;
 import java.util.Locale;
 
 import static java.util.Objects.isNull;
@@ -33,7 +36,74 @@ public class App {
         scale = Rational.of(20);
         System.out.println(gearAsHtml(gear1, gear2, scale));
 
+        showFaceHtml(gear1);
 
+
+    }
+
+    private static void showFaceHtml(GearGeometry gear1) {
+        System.out.println("*** FACE ***");
+
+        Point orig = Point.of(0 ,0);
+
+        SVGPath svgPath = getSvgPathFace(orig, gear1.getFace());
+
+        String html = """
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                <body>
+
+                <hr/>
+                <svg width="400" height="400" viewBox="-100 -100 300 300">
+                <g transform="scale(10 -10)" stroke-width="0.1">
+                    <circle r='%2$f' stroke='none' fill='blue' fill-opacity='0.7' />
+                    <circle id='baseCircle'  r='%3$f' stroke='red'  stroke-dasharray='1 1' fill='none' stroke-opacity='0.7' />                    
+                    <circle id='pitchCircle' r='%4$f' stroke='green' stroke-dasharray='1 1' fill='none' stroke-opacity='0.7' />
+                    
+                    <line id='Xaxis' stroke='black' stroke-opacity='0.5' x1='-10' y1='0' x2='10' y2='0'/>
+                    <line id='Yaxis' stroke='black' stroke-opacity='0.5' x1='0' y1='-10' x2='0' y2='10'/>
+                    <path d="%1$s" 
+                        stroke="blue" fill="none" transform="matrix(1 0 0 1 %4$f 0)"/>
+                         <!-- transform="translate(9.6 0)"-->
+                    <path d="%1$s" 
+                        stroke="red" fill="none" 
+                        transform="scale(1 -1) matrix(%5$f %6$f %7$f %5$f 0 0) translate(%4$f 0)"/>
+                        <!-- matrix ref: https://academo.org/demos/rotation-about-point/ -->
+                </g>
+                      Sorry, your browser does not support inline SVG.
+                </svg>
+                <hr/>
+
+                </body>
+                </html>
+                """;
+
+        Real angleOtherFace = gear1.getCircularPitch().divide(gear1.getGearRadius()).divide(-2);
+        double sin = Math.sin(angleOtherFace.toDouble());
+        System.out.printf(Locale.ENGLISH,
+                html,
+                svgPath.render(), // %1$s
+                gear1.getGearRadius().subtract(gear1.getDedendum()).simplify().toDouble(), // %2$f
+                gear1.getBaseCircleRadius().toDouble(), // %3$f
+                gear1.getGearRadius().toDouble(), // %4$f
+                Math.cos(angleOtherFace.toDouble()), // %5$f
+                sin,  // %6$f
+                -sin // %7$f
+        );
+    }
+
+    private static SVGPath getSvgPathFace(Point orig, List<Vector> face) {
+        SVGPath svgPath = new SVGPath();
+        boolean first = true;
+        for (Vector vec : face) {
+            if (first) {
+                svgPath.move(vec.add(orig));
+                first=false;
+            } else {
+                svgPath.line(vec.add(orig));
+            }
+        }
+        return svgPath;
     }
 
     public static String gearAsHtml(GearGeometry gear1, GearGeometry gear2, Rational scale) {
@@ -53,14 +123,14 @@ public class App {
                 <html lang="pt-BR">
                 <body>
                    <svg height="%3$f" width="%4$f" viewBox="%5$f %6$f %3$f %4$f">
-<defs>                   
+<defs>
 <path id="gearProfile" d="%7$s"
       stroke="blue" stroke-width="1" fill="none"/>
 <path id="gear1" d="%1$s"
       stroke="none" stroke-width="1" fill="red" />
 <path id="gear2" d="%2$s"
       stroke="none" stroke-width="1" fill="green"  />
-</defs>             
+</defs>
 <use xlink:href="#gear1" x="0" y="0" fill-opacity="0.8">
 <animateTransform
       attributeName="transform"
@@ -70,7 +140,7 @@ public class App {
       to="%21$f 0 0"
       dur="10s"
       repeatCount="indefinite" />
-</use>    
+</use>
 <use xlink:href="#gear2" x="%12$f" y="0" fill-opacity="0.8">
 <animateTransform
       attributeName="transform"
@@ -80,7 +150,7 @@ public class App {
       to="-%20$f %12$f 0"
       dur="10s"
       repeatCount="indefinite" />
-</use>    
+</use>
 
 <circle id="gear1_d" r="%8$f" stroke="blue" stroke-width="1" stroke-dasharray='10 10' fill="none" stroke-opacity="0.5"/>
 <circle id="gear1_db" r="%9$f" stroke="olive" stroke-width="1" stroke-dasharray='10 10' fill="none" stroke-opacity="0.5"/>
@@ -89,12 +159,12 @@ public class App {
 <circle id="gear2_db" r="%11$f" stroke="red" stroke-width="1" stroke-dasharray='10 10' fill="none" stroke-opacity="0.5"
     transform="translate(%12$f 0)" />
 
-<g>  
-    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %22$f) rotate(90 0 0)" />    
-    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %16$f) rotate(90 0 0)" />    
-    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %15$f) rotate(90 0 0)" />    
-    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %14$f) rotate(90 0 0)" />    
-    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %17$f) rotate(90 0 0)" />    
+<g>
+    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %22$f) rotate(90 0 0)" />
+    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %16$f) rotate(90 0 0)" />
+    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %15$f) rotate(90 0 0)" />
+    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %14$f) rotate(90 0 0)" />
+    <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %17$f) rotate(90 0 0)" />
     <use xlink:href="#gearProfile" x="0" y="0" transform="translate(%13$f %18$f) rotate(90 0 0)" />
     <animateTransform
       attributeName="transform"
@@ -103,8 +173,8 @@ public class App {
       from="0 0"
       to="0 %19$f"
       dur="10s"
-      repeatCount="indefinite" />    
-</g>    
+      repeatCount="indefinite" />
+</g>
                       Sorry, your browser does not support inline SVG.
                    </svg>
                 </body>

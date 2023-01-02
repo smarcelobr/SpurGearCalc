@@ -1,7 +1,5 @@
-package br.nom.figueiredo.sergio.spurgearcalc;
+package br.nom.figueiredo.sergio.math;
 
-import br.nom.figueiredo.sergio.math.Rational;
-import br.nom.figueiredo.sergio.math.Real;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

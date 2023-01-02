@@ -1,6 +1,6 @@
 package br.nom.figueiredo.sergio.spurgearcalc.svg;
 
-import br.nom.figueiredo.sergio.spurgearcalc.Point;
+import br.nom.figueiredo.sergio.math.Point;
 
 import java.util.Locale;
 
